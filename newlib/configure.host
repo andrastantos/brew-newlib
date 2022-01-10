@@ -266,6 +266,9 @@ case "${host_cpu}" in
 	;;
   moxie)
 	machine_dir=moxie
+	;;
+  brew)
+	machine_dir=brew
         ;;
   msp430*)
 	newlib_cflags="${newlib_cflags} -DPREFER_SIZE_OVER_SPEED -DSMALL_MEMORY"
@@ -579,6 +582,9 @@ case "${host}" in
   moxie*)
         sys_dir=
         ;;
+  brew*)
+        sys_dir=
+        ;;
   nios2*)
 	sys_dir=
 	;;
@@ -844,6 +850,10 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
         syscall_dir=syscalls
 	default_newlib_io_long_long="yes"
 	newlib_cflags="${newlib_cflags} -Os -DPREFER_SIZE_OVER_SPEED -DSMALL_MEMORY"
+        ;;
+  brew-*-elf*)
+        syscall_dir=syscalls
+	default_newlib_io_long_long="yes"
         ;;
   nios2*)
 	syscall_dir=

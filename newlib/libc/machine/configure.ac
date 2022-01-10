@@ -29,6 +29,7 @@ if test -n "${machine_dir}"; then
 	arc) AC_CONFIG_SUBDIRS(arc) ;;
 	arm) AC_CONFIG_SUBDIRS(arm) ;;
 	bfin) AC_CONFIG_SUBDIRS(bfin) ;;
+	brew) AC_CONFIG_SUBDIRS(brew) ;;
 	cr16) AC_CONFIG_SUBDIRS(cr16) ;;
 	cris) AC_CONFIG_SUBDIRS(cris) ;;
 	crx) AC_CONFIG_SUBDIRS(crx) ;;

@@ -797,6 +797,7 @@ amdgcn
 arc
 arm
 bfin
+brew
 cr16
 cris
 crx
@@ -11913,6 +11914,8 @@ subdirs="$subdirs a29k"
 	arm) subdirs="$subdirs arm"
  ;;
 	bfin) subdirs="$subdirs bfin"
+ ;;
+	brew) subdirs="$subdirs brew"
  ;;
 	cr16) subdirs="$subdirs cr16"
  ;;

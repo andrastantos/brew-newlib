@@ -410,6 +410,9 @@
 
 /* See the above comment before you add a new EM_* value here.  */
 
+#define EM_BREW                0xb0a1  /* FINALIZE AFTER MERGE: BREW number */
+
+
 /* Values for e_version.  */
 
 #define EV_NONE		0		/* Invalid ELF version */

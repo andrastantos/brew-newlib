@@ -343,6 +343,8 @@ typedef struct {
 
 #define EM_ALPHA	0x9026
 
+#define EM_BREW                0xb0a1  /* FINALIZE AFTER MERGE: BREW number */
+
 #define EV_NONE		0
 #define EV_CURRENT	1
 #define EV_NUM		2

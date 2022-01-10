@@ -96,6 +96,9 @@ case "${target}" in
   bfin-*-*)
 	AC_CONFIG_SUBDIRS([bfin])
 	;;
+  brew-*-*)
+	AC_CONFIG_SUBDIRS([brew])
+	;;
   cr16-*-*)
         AC_CONFIG_SUBDIRS([cr16])
         ;;

@@ -1,4 +1,4 @@
-# Copyright (c) 2008, 2010 Anthony Green
+# Copyright (c) 2008, 2010 Anthony Green, 2022 Andras Tantos
 #
 # The authors hereby grant permission to use, copy, modify, distribute,
 # and license this software and its documentation for any purpose, provided
@@ -11,7 +11,7 @@
 # they apply.
 
 # Makefile for libgloss/spro. This is the board support code for the
-# moxie target.
+# brew target.
 
 DESTDIR =
 VPATH = @srcdir@ @srcdir@/..
@@ -58,7 +58,7 @@ OBJCOPY = `if [ -f ${objroot}/../binutils/objcopy ] ; \
 	then echo ${objroot}/../binutils/objcopy ; \
 	else t='$(program_transform_name)'; echo objcopy | sed -e $$t ; fi`
 
-LD_SCRIPTS = moxie-elf-common.ld qemu.ld sim.ld moxiebox.ld
+LD_SCRIPTS = brew-elf-common.ld sim.ld
 
 @BUILD_CRT0_TRUE@CRT0		= crt0.o
 @BUILD_CRT0_TRUE@CRT0_INSTALL	= install-crt0
@@ -79,34 +79,17 @@ SIM_OBJS = fstat.o \
 	   sim-open.o \
 	   sim-read.o \
 	   sim-time.o \
+	   sim-time-wrap.o \
 	   sim-unlink.o \
 	   sim-write.o \
 	   stat.o
 
-QEMU_BSP = libqemu.a
-QEMU_OBJS = qemu-write.o \
-	    qemu-time.o \
-	    sim-exit.o \
-	    sbrk.o \
-	    sim-close.o \
-	    fstat.o \
-	    getpid.o \
-	    isatty.o \
-	    kill.o \
-	    putnum.o \
-	    sim-lseek.o \
-	    sim-read.o
-
 #### Host specific Makefile fragment comes in here.
 @host_makefile_frag@
 
-all: ${CRT0} $(SIM_BSP) $(QEMU_BSP)
+all: ${CRT0} $(SIM_BSP)
 
 $(SIM_BSP): $(SIM_OBJS)
-	$(AR) $(ARFLAGS) $@ $?
-	$(RANLIB) $@
-
-$(QEMU_BSP): $(QEMU_OBJS)
 	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
 
@@ -122,7 +105,8 @@ sim-inbyte.o: $(srcdir)/sim-inbyte.c
 sim-lseek.o: $(srcdir)/sim-lseek.c
 sim-open.o: $(srcdir)/sim-open.S
 sim-read.o: $(srcdir)/sim-read.S
-sim-time.o: $(srcdir)/sim-time.c
+sim-time.o: $(srcdir)/sim-time.S
+sim-time-wrap.o: $(srcdir)/sim-time-wrap.c
 sim-unlink.o: $(srcdir)/sim-unlink.S
 sim-write.o: $(srcdir)/sim-write.S
 stat.o: $(srcdir)/stat.c
@@ -130,7 +114,6 @@ qemu-write.o: $(srcdir)/qemu-write.c
 
 install: ${CRT0_INSTALL} $($(CPU)_INSTALL)
 	$(INSTALL_DATA) $(SIM_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(SIM_BSP)
-	$(INSTALL_DATA) $(QEMU_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(QEMU_BSP)
 	for x in ${LD_SCRIPTS}; do \
 	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/lib/$$x; \
 	done;

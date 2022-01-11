@@ -1,7 +1,7 @@
 /*
  * sim-unlink.S -- write interface for moxie simulator
  * 
- * Copyright (c) 2008, 2019 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -15,14 +15,24 @@
  */
 
 #include "syscall.h"
+#include "macros.S"
 
-	.globl	_unlink
-	.type	_unlink,@function
-	.weak	unlink
-	.text
+/*
+ * Input:
+ * $r4        -- File name pointer.
+ *
+ * Output:
+ * $r4        -- 0 on success or -1.
+ * errno      -- Set if an error
+ */
+
+  .globl   _unlink
+  .type    _unlink,@function
+  .weak    unlink
+  .text
 _unlink:
 unlink:
-	swi	SYS_unlink
-	ret
+  SYSCALLM SYS_unlink
+  RET
 .Lend:
-	.size	_unlink,.Lend-_unlink
+  .size    _unlink,.Lend-_unlink

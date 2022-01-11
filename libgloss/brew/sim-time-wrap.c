@@ -16,36 +16,9 @@
 #include <sys/time.h>
 #include <sys/times.h>
 #include "glue.h"
+#include <syscall.h>
 
-/*
- * time -- simulator interface to return current time in seconds.
- */
-__asm__ ("\
-	.text\n\
-	.globl	_sim_time\n\
-	.type	_sim_time,@function\n\
-_sim_time:\n\
-        jmpa _sim_time\n\
-	ret\n\
-.Lsim:\n\
-	.size	_sim_time,.Lsim-_sim_time");
-
-extern time_t _sim_time (void) __asm__("_sim_time");
-
-
-/*
- * time -- return current time in seconds.
- */
-time_t
-time (time_t *t)
-{
-  time_t ret = _sim_time ();
-
-  if (t)
-    *t = ret;
-
-  return ret;
-}
+extern time_t time(time_t *buf);
 
 /*
  * _times -- no clock, so return an error.
@@ -63,13 +36,13 @@ _times (struct tms *buf)
  */
 int
 _gettimeofday (struct timeval *tv,
-	void *tzvp)
+  void *tzvp)
 {
   struct timezone *tz = tzvp;
   if (tz)
     tz->tz_minuteswest = tz->tz_dsttime = 0;
 
   tv->tv_usec = 0;
-  tv->tv_sec = _sim_time ();
+  tv->tv_sec = time(NULL);
   return 0;
 }

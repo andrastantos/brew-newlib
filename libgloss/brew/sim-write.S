@@ -1,7 +1,7 @@
 /*
  * sim-write.S -- write interface for moxie simulator
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -15,25 +15,26 @@
  */
 
 #include "syscall.h"
+#include "macros.S"
 
 /*
  * Input:
- * $r0	    -- File descriptor.
- * $r1	    -- String to be printed.
- * -0x12($fp) -- Length of the string.
+ * $r4    -- File descriptor.
+ * $r5    -- String to be printed.
+ * $r6    -- Length of the string.
  *
  * Output:
- * $r0	  -- Length written or -1.
+ * $r4    -- Length written or -1.
  * errno  -- Set if an error
  */
 
-	.globl	_write
-	.type	_write,@function
-	.weak	write
-	.text
+  .globl   _write
+  .type    _write,@function
+  .weak    write
+  .text
 _write:
 write:
-	swi	SYS_write
-	ret
+  SYSCALLM SYS_write
+  RET
 .Lend:
-	.size	_write,.Lend-_write
+  .size    _write,.Lend-_write

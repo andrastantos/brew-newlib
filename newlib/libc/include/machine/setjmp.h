@@ -242,7 +242,7 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __brew__
-#define _JBLEN (********** FIXME: WHAT SHOULD THE LONG_JUMP_BUFFER BE????????? ************)
+#define _JBLEN 9
 #endif
 
 

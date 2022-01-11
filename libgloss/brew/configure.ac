@@ -34,16 +34,8 @@ AC_PROG_RANLIB
 LIB_AM_PROG_AS
 
 dnl Don't build crt0 for moxiebox, which provides crt0 for us.
-case "${target}" in
-  moxie-*-moxiebox*)
-    BUILD_CRT0_TRUE='#'
-    BUILD_CRT0_FALSE=
-    ;;
-  *)
-    BUILD_CRT0_TRUE=
-    BUILD_CRT0_FALSE='#'
-    ;;
-esac
+BUILD_CRT0_TRUE=
+BUILD_CRT0_FALSE='#'
 
 AC_SUBST(BUILD_CRT0_TRUE)
 AC_SUBST(BUILD_CRT0_FALSE)

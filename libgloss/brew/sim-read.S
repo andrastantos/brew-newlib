@@ -1,7 +1,7 @@
 /*
  * sim-read.S -- read interface for moxie simulator
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -15,25 +15,26 @@
  */
 
 #include "syscall.h"
+#include "macros.S"
 
 /*
  * Input:
- * $r0	      -- File descriptor.
- * $r1	      -- Buffer to be read into.
- * -0x12($fp) -- Length of the buffer.
+ * $r4        -- File descriptor.
+ * $r5        -- Buffer to be read into.
+ * $r6        -- Length of the buffer.
  *
  * Output:
- * $r0	  -- Length read or -1.
- * errno  -- Set if an error
+ * $r4        -- Length read or -1.
+ * errno      -- Set if an error
  */
 
-	.globl	_read
-	.type	_read,@function
-	.weak	read
-	.text
+  .globl   _read
+  .type    _read,@function
+  .weak    read
+  .text
 _read:
 read:
-	swi	SYS_read
-	ret
+  SYSCALLM SYS_read
+  RET
 .Lend:
-	.size	_read,.Lend-_read
+  .size    _read,.Lend-_read

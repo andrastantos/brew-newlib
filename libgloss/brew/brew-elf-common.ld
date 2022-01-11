@@ -1,7 +1,8 @@
 /*
- * Default linker script for moxiebox.
+ * The common part of the default linker scripts for standalone
+ * executables running on a Brew processor.
  *
- * Copyright (C) 2014 Anthony Green
+ * Copyright (C) 2008, 2012 Anthony Green, 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify,
  * distribute, and license this software and its documentation for any
@@ -14,7 +15,8 @@
  * clearly indicated on the first page of each file where they apply.
  */
 
-OUTPUT_FORMAT("elf32-littlemoxie")
+OUTPUT_FORMAT("elf32-bigmoxie", "elf32-bigmoxie",
+              "elf32-littlemoxie")
 OUTPUT_ARCH(moxie)
 ENTRY(_start)
 SECTIONS
@@ -228,5 +230,6 @@ SECTIONS
   .debug_funcnames 0 : { *(.debug_funcnames) }
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
+  .stack 0x400000 : { _stack = .; *(.stack) }
   /* These must appear regardless of  .  */
 }

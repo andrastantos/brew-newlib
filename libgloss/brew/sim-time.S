@@ -1,7 +1,7 @@
 /*
- * sim-lseek.S -- write interface for moxie simulator
+ * sim-time.S -- time interface for moxie simulator
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -14,18 +14,25 @@
  * they apply.
  */
 
-#include <sys/types.h>
-#include <errno.h>
+#include "syscall.h"
+#include "macros.S"
 
 /*
- * lseek -- Since a simulated serial port is non-seekable, we return
- * an error.
+ * Input:
+ * $r4    -- address of time_t value to receive time or NULL.
+ *
+ * Output:
+ * $r4    -- return time in seconds since jan1st 1970, or -1 on error.
+ * errno  -- Set if an error
  */
-off_t
-_lseek (int fd,
-       off_t offset,
-       int whence)
-{
-  errno = ESPIPE;
-  return ((off_t)-1);
-}
+
+  .globl   _time
+  .type    _time,@function
+  .weak    time
+  .text
+_time:
+time:
+  SYSCALLM SYS_time
+  RET
+.Lend:
+  .size    _time,.Lend-_time

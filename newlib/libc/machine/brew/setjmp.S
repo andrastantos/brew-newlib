@@ -1,0 +1,93 @@
+/* A setjmp.c for Brew
+   Copyright (C) 2022 Andras Tantos
+
+   The authors hereby grant permission to use, copy, modify, distribute,
+   and license this software and its documentation for any purpose, provided
+   that existing copyright notices are retained in all copies and that this
+   notice is included verbatim in any distributions. No written agreement,
+   license, or royalty fee is required for any of the authorized uses.
+   Modifications to this software may be copyrighted by their authors
+   and need not follow the licensing terms described here, provided that
+   the new terms are clearly indicated on the first page of each file where
+   they apply.  */
+
+# setjmp/longjmp for brew.
+#
+# During setjmp we need to save all registers not marked in CALL_USED_REGISTERS
+# for gcc, that is, all registers that that are available across function calls.
+# Currently, those are $r8...$14.
+# On top of this, of course we'll have to preserve the stack-frame, so $sp and
+# $fp goes in here too.
+#
+# Thus, the jmpbuf layout is the following:
+#
+# Register        jmpbuf offset
+#   $fp             0x00
+#   $sp             0x04
+#   $r8             0x08
+#   $r9             0x0c
+#   $r10            0x10
+#   $r11            0x14
+#   $r12            0x18
+#   $r13            0x1c
+#   $r14            0x20
+
+/* Stack is pre-decrement for push, and post-increment for pop */
+
+  .macro CALL label, temp_reg=$r3
+  \temp_reg <- $pc + 16
+  $sp <- $sp - 4
+  mem[$sp] <- \temp_reg
+  $pc <- \label
+  .endm
+
+  .macro RET
+  $sp <- $sp + 4
+  $pc <- mem[$sp,(-4)]
+  .endm
+
+# Upon call, $r4 is set to the buffer address
+# Upon exit, $r4 is set to 0.
+  .text
+  .global setjmp
+  .type   setjmp,@function
+setjmp:
+  mem[$r4] <- $fp
+  mem[$r4, 0x04] <- $sp
+  mem[$r4, 0x08] <- $r8
+  mem[$r4, 0x0c] <- $r9
+  mem[$r4, 0x10] <- $r10
+  mem[$r4, 0x14] <- $r11
+  mem[$r4, 0x18] <- $r12
+  mem[$r4, 0x1c] <- $r13
+  mem[$r4, 0x20] <- $r14
+  $r4 <- $r4 - $r4
+  RET
+.Lend1:
+  .size  setjmp,.Lend1-setjmp
+
+# Upon call, $r4 is set to the buffer address
+#            $r5 is set to the desired return code
+# Upon exit, $r4 is set to the desired return code, except if it was 0.
+#                In that later case, $r4 is set to 1 (to avoid confusion
+#                with the return values from initial setup).
+  .global  longjmp
+  .type  longjmp,@function
+longjmp:
+  $fp  <- mem[$r4]
+  $sp  <- mem[$r4, 0x04]
+  $r8  <- mem[$r4, 0x08]
+  $r9  <- mem[$r4, 0x0c]
+  $r10 <- mem[$r4, 0x10]
+  $r11 <- mem[$r4, 0x14]
+  $r12 <- mem[$r4, 0x18]
+  $r13 <- mem[$r4, 0x1c]
+  $r14 <- mem[$r4, 0x20]
+  $r4 <- $r5
+  if $r4 == 0 $pc <- .Lreturn1
+  RET
+.Lreturn1:
+  $r4 <- $r4 + 1
+  RET
+.Lend2:
+  .size  longjmp,.Lend2-longjmp

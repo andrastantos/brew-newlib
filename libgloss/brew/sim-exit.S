@@ -1,7 +1,7 @@
 /*
- * sim-exit.S -- _exit interface for moxie simulator
+ * sim-exit.S -- _exit interface for brew simulator
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -15,19 +15,20 @@
  */
 
 #include "syscall.h"
+#include "macros.S"
 
 /*
  * Input:
- * $r0	-- exit value
+ * $r4  -- exit value
  *
  * Output:
  * none
  */
 
-	.globl	_exit
-	.type	_exit,@function
-	.text
+  .globl   _exit
+  .type    _exit,@function
+  .text
 _exit:
-	swi	SYS_exit 
+  SYSCALLM SYS_exit 
 .Lend:
-	.size	_exit,.Lend-_exit
+  .size    _exit,.Lend-_exit

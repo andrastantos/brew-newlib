@@ -1,7 +1,6 @@
-/*
- * qemu-write.c -- write interface for default qemu simulator
+/* macros.S -- common macros for brew.
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022  Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -14,10 +13,21 @@
  * they apply.
  */
 
-int _write (int fd, char *buf, int len)
-{
-  int i = 0;
-  while (i < len)
-    *(char *)0x3f8 = buf[i++];
-  return len;
-}
+/* Stack is pre-decrement for push, and post-increment for pop */
+
+  .macro CALL label, temp_reg=$r3
+  \temp_reg <- $pc + 16
+  $sp <- $sp - 4
+  mem[$sp] <- \temp_reg
+  $pc <- \label
+  .endm
+
+  .macro RET
+  $sp <- $sp + 4
+  $pc <- mem[$sp,(-4)]
+  .endm
+
+  .macro SYSCALLM syscall_no
+    syscall
+    .hword \syscall_no
+.endm

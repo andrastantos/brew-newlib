@@ -1,7 +1,7 @@
 /*
  * sim-open.S -- open interface for moxie simulator
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -15,15 +15,16 @@
  */
 
 #include "syscall.h"
+#include "macros.S"
 
 /*
  * Input:
- * $r0	    -- File name to open.
- * $r1      -- open mode.
+ * $r4        -- File name to open.
+ * $r5        -- open mode.
  * -0x12($fp) -- optionally, the permission bits to set the file to.
  *
  * Output:
- * $r0	  -- file descriptor or -1.
+ * $r4	  -- file descriptor or -1.
  * errno  -- Set if an error
  */
 
@@ -33,7 +34,7 @@
 	.text
 _open:
 open:
-	swi	SYS_open
-	ret
+	SYSCALLM SYS_open
+	RET
 .Lend:
 	.size	_open,.Lend-_open

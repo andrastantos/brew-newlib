@@ -1,6 +1,6 @@
-/* putnum.c -- put a hex number on the output device.
+/* brew_calls.h -- Extra syscall numbers implemented by the brew runtime.
  * 
- * Copyright (c) 2008 Anthony Green
+ * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
  * and license this software and its documentation for any purpose, provided
@@ -12,29 +12,5 @@
  * the new terms are clearly indicated on the first page of each file where
  * they apply.
  */
-#include "glue.h"
 
-/*
- * putnum -- print a 32 bit number in hex
- */
-void
-_putnum (unsigned int num)
-{
-  char  buf[9];
-  int   cnt;
-  char  *ptr;
-  int   digit;
-  
-  ptr = buf;
-  for (cnt = 7 ; cnt >= 0 ; cnt--) {
-    digit = (num >> (cnt * 4)) & 0xf;
-    
-    if (digit <= 9)
-      *ptr++ = (char) ('0' + digit);
-    else
-      *ptr++ = (char) ('a' - 10 + digit);
-  }
-
-  *ptr = (char) 0;
-  print (buf);
-}
+#define BREW_isatty (0x8000)

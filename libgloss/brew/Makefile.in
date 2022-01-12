@@ -65,55 +65,83 @@ LD_SCRIPTS = brew-elf-common.ld sim.ld
 @BUILD_CRT0_FALSE@CRT0		= 
 @BUILD_CRT0_FALSE@CRT0_INSTALL	= 
 
-SIM_BSP = libsim.a
-SIM_OBJS = fstat.o \
-	   getpid.o \
-	   isatty.o \
-	   kill.o \
-	   putnum.o \
-	   sbrk.o \
-	   sim-close.o \
-	   sim-exit.o \
-	   sim-inbyte.o \
-	   sim-lseek.o \
-	   sim-open.o \
-	   sim-read.o \
-	   sim-time.o \
-	   sim-time-wrap.o \
-	   sim-unlink.o \
-	   sim-write.o \
-	   stat.o
+BREW_BSP = libbrew.a
+BREW_OBJS = \
+	exit.o \
+	open.o \
+	close.o \
+	read.o \
+	write.o \
+	lseek.o \
+	unlink.o \
+	getpid.o \
+	kill.o \
+	fstat.o \
+	chdir.o \
+	stat.o \
+	chmod.o \
+	utime.o \
+	time.o \
+	gettimeofday.o \
+	times.o \
+	link.o \
+	isatty.o \
+	sbrk.o
 
 #### Host specific Makefile fragment comes in here.
 @host_makefile_frag@
 
-all: ${CRT0} $(SIM_BSP)
+all: ${CRT0} $(BREW_BSP)
 
-$(SIM_BSP): $(SIM_OBJS)
+$(BREW_BSP): $(BREW_OBJS)
 	$(AR) $(ARFLAGS) $@ $?
 	$(RANLIB) $@
 
-fstat.o: $(srcdir)/fstat.c
-getpid.o: $(srcdir)/getpid.c
-isatty.o: $(srcdir)/isatty.c
-kill.o: $(srcdir)/kill.c
-putnum.o: $(srcdir)/putnum.c
-sbrk.o: $(srcdir)/sbrk.c
-sim-close.o: $(srcdir)/sim-close.S
-sim-exit.o: $(srcdir)/sim-exit.S
-sim-inbyte.o: $(srcdir)/sim-inbyte.c
-sim-lseek.o: $(srcdir)/sim-lseek.c
-sim-open.o: $(srcdir)/sim-open.S
-sim-read.o: $(srcdir)/sim-read.S
-sim-time.o: $(srcdir)/sim-time.S
-sim-time-wrap.o: $(srcdir)/sim-time-wrap.c
-sim-unlink.o: $(srcdir)/sim-unlink.S
-sim-write.o: $(srcdir)/sim-write.S
+exit.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_exit -D SYSCALL_NO=SYS_exit -c $<
+open.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_open -D SYSCALL_NO=SYS_open -c $<
+close.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_close -D SYSCALL_NO=SYS_close -c $<
+read.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_read -D SYSCALL_NO=SYS_read -c $<
+write.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_write -D SYSCALL_NO=SYS_write -c $<
+lseek.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_lseek -D SYSCALL_NO=SYS_lseek -c $<
+unlink.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_unlink -D SYSCALL_NO=SYS_unlink -c $<
+getpid.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_getpid -D SYSCALL_NO=SYS_getpid -c $<
+kill.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_kill -D SYSCALL_NO=SYS_kill -c $<
+fstat.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_fstat -D SYSCALL_NO=SYS_fstat -c $<
+
+chdir.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_chdir -D SYSCALL_NO=SYS_chdir -c $<
 stat.o: $(srcdir)/stat.c
-qemu-write.o: $(srcdir)/qemu-write.c
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_stat -D SYSCALL_NO=SYS_stat -c $<
+chmod.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_chmod -D SYSCALL_NO=SYS_chmod -c $<
+utime.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_utime -D SYSCALL_NO=SYS_utime -c $<
+time.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_time -D SYSCALL_NO=SYS_time -c $<
+gettimeofday.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_gettimeofday -D SYSCALL_NO=SYS_gettimeofday -c $<
+times.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_times -D SYSCALL_NO=SYS_times -c $<
+link.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_link -D SYSCALL_NO=SYS_link -c $<
+
+isatty.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_isatty -D SYSCALL_NO=BREW_isatty -c $<
+
+sbrk.o: $(srcdir)/sbrk.c
 
 install: ${CRT0_INSTALL} $($(CPU)_INSTALL)
-	$(INSTALL_DATA) $(SIM_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(SIM_BSP)
+	$(INSTALL_DATA) $(BREW_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(BREW_BSP)
 	for x in ${LD_SCRIPTS}; do \
 	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/lib/$$x; \
 	done;

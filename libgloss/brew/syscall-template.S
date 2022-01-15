@@ -39,9 +39,11 @@
  */
 
   .globl   FN_NAME
+  .extern  errno
   .type    FN_NAME,@function
   .text
 FN_NAME:
+  $r3 <- errno
   syscall
   .hword  SYSCALL_NO
   RET

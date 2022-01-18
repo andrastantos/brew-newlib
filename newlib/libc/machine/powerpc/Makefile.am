@@ -1,10 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
+AM_CPPFLAGS = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
-INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-
-AM_CCASFLAGS = $(INCLUDES)
+AM_CCASFLAGS = $(AM_CPPFLAGS)
 
 noinst_LIBRARIES = lib.a
 
@@ -22,7 +20,7 @@ EXTRA_lib_a_SOURCES = \
   simdldtoa.c strtosfix16.c strtosfix32.c strtosfix64.c strtoufix16.c \
   strtoufix32.c strtoufix64.c ufix64toa.c
 
-ACLOCAL_AMFLAGS = -I ../../.. -I ../../../.. 
+ACLOCAL_AMFLAGS = -I ../../.. -I ../../../.. -I ../../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
 
 lib_a-vec_reallocr.o: vec_mallocr.c

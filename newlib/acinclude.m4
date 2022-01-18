@@ -2,7 +2,7 @@ dnl This provides configure definitions used by all the newlib
 dnl configure.in files.
 
 AC_DEFUN([DEF_NEWLIB_MAJOR_VERSION],m4_define([NEWLIB_MAJOR_VERSION],[4]))
-AC_DEFUN([DEF_NEWLIB_MINOR_VERSION],m4_define([NEWLIB_MINOR_VERSION],[1]))
+AC_DEFUN([DEF_NEWLIB_MINOR_VERSION],m4_define([NEWLIB_MINOR_VERSION],[2]))
 AC_DEFUN([DEF_NEWLIB_PATCHLEVEL_VERSION],m4_define([NEWLIB_PATCHLEVEL_VERSION],[0]))
 AC_DEFUN([DEF_NEWLIB_VERSION],m4_define([NEWLIB_VERSION],[NEWLIB_MAJOR_VERSION.NEWLIB_MINOR_VERSION.NEWLIB_PATCHLEVEL_VERSION]))
 
@@ -120,8 +120,9 @@ AC_SUBST(newlib_basedir)
 
 AC_CANONICAL_HOST
 
-AM_INIT_AUTOMAKE([cygnus no-define 1.9.5])
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES(yes)])
+AM_INIT_AUTOMAKE([foreign no-installinfo no-dependencies no-dist no-define 1.15.1])
+AM_MAINTAINER_MODE()
+AM_SILENT_RULES(yes)
 
 # FIXME: We temporarily define our own version of AC_PROG_CC.  This is
 # copied from autoconf 2.12, but does not call AC_PROG_CC_WORKS.  We

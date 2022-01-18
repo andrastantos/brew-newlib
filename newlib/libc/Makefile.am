@@ -1,7 +1,5 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
 if HAVE_POSIX_DIR
 POSIX_SUBDIR = posix
 endif
@@ -224,7 +222,8 @@ targetdep.tex: stmp-targetdep ; @true
 
 $(SUBDEFS): stmp-targetdep ; @true
 
-info_TEXINFOS = libc.texinfo
+TEXINFO_TEX = ../../texinfo/texinfo.tex
+info_TEXINFOS = libc.texi
 libc_TEXINFOS = sigset.texi extra.texi posix.texi stdio64.texi iconvset.texi \
 	targetdep.tex $(SUBDEFS)
 
@@ -255,5 +254,5 @@ CLEANFILES = $(CRT0) \
 	tmp-stdio64.texi tmp-posix.texi tmp-targetdep.texi \
 	*.xml *.3
 
-ACLOCAL_AMFLAGS = -I .. -I ../..
+ACLOCAL_AMFLAGS = -I .. -I ../.. -I ../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host

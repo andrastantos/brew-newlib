@@ -1,7 +1,5 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
 if NEWLIB_HW_FP
 MATHDIR = mathfp
 else
@@ -35,8 +33,8 @@ endif
 
 $(SUBLIBS):
 
-info_TEXINFOS = libm.texinfo
-
+TEXINFO_TEX = ../../texinfo/texinfo.tex
+info_TEXINFOS = libm.texi
 libm_TEXINFOS = targetdep.tex
 
 libm.dvi: targetdep.tex math/stmp-def complex/stmp-def fenv/stmp-def
@@ -82,5 +80,5 @@ force:
 
 CLEANFILES = tmp.texi targetdep.tex stmp-targetdep *.xml *.3
 
-ACLOCAL_AMFLAGS = -I .. -I ../..
+ACLOCAL_AMFLAGS = -I .. -I ../.. -I ../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host

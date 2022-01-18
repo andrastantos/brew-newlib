@@ -1,12 +1,10 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
-INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+AM_CPPFLAGS = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
 noinst_LIBRARIES = lib.a
 
-AM_CCASFLAGS = $(INCLUDES)
+AM_CCASFLAGS = $(AM_CPPFLAGS)
 
 lib_a_SOURCES = setjmp.S assert.c clearerr.c creat.c fclose.c feof.c \
 	ferror.c fflush.c fgetc.c fgetpos.c fgets.c fileno.c fiprintf.S \
@@ -38,6 +36,6 @@ endif
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)
 lib_a_CFLAGS = $(AM_CFLAGS)
 
-ACLOCAL_AMFLAGS = -I ../../.. -I ../../../..
+ACLOCAL_AMFLAGS = -I ../../.. -I ../../../.. -I ../../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
 

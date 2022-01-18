@@ -1,10 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
+AM_CPPFLAGS = -I $(newlib_basedir)/libm/common $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
-INCLUDES = -I $(newlib_basedir)/libm/common $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-
-AM_CCASFLAGS = $(INCLUDES)
+AM_CCASFLAGS = $(AM_CPPFLAGS)
 
 if MACH_ADD_SETJMP
 ADDED_SOURCES = setjmp.S
@@ -32,5 +30,5 @@ endif # USE_LIBTOOL
 
 include $(srcdir)/../../../Makefile.shared
 
-ACLOCAL_AMFLAGS = -I ../../.. -I ../../../..
+ACLOCAL_AMFLAGS = -I ../../.. -I ../../../.. -I ../../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host

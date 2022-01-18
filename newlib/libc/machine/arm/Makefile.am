@@ -1,10 +1,8 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
+AM_CPPFLAGS = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
-INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-
-AM_CCASFLAGS = $(INCLUDES)
+AM_CCASFLAGS = $(AM_CPPFLAGS)
 
 noinst_LIBRARIES = lib.a
 
@@ -22,7 +20,7 @@ lib_a_SOURCES += strlen.S
 lib_a_CCASFLAGS=$(AM_CCASFLAGS)
 lib_a_CFLAGS = $(AM_CFLAGS)
 
-ACLOCAL_AMFLAGS = -I ../../.. -I ../../../..
+ACLOCAL_AMFLAGS = -I ../../.. -I ../../../.. -I ../../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
 
 MEMCHR_DEP=acle-compat.h

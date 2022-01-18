@@ -1,8 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
-INCLUDES = -I$(srcdir)/../include -I$(srcdir)/machine/$(machine_dir) -I$(srcdir)/machine/generic  $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS) -I$(srcdir)/..
+AM_CPPFLAGS = -I$(srcdir)/../include -I$(srcdir)/machine/$(machine_dir) -I$(srcdir)/machine/generic  $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS) -I$(srcdir)/..
 
 LIBTOOL_VERSION_INFO = 0:0:0
 
@@ -69,7 +67,7 @@ libpthread_la_LIBADD = $(LIBADD_OBJS)
 ## libpthread_la_DEPENDENCIES = defs.h crti.S
 libpthread_la_DEPENDENCIES = $(LIBADD_OBJS) extra-libtool-objlist
 noinst_DATA=objectlist.awk.in
-LIB_COMPILE = $(LTCOMPILE)
+LIB_COMPILE = $(AM_V_CC)$(LTCOMPILE)
 
 libthread_db_la_SOURCES = $(LIB_DB_SOURCES)
 
@@ -81,7 +79,7 @@ libpthread_a_LIBADD = $(LIBADD_OBJS) $(MACHINE_LIB)
 libpthread_a_CFLAGS = $(AM_CFLAGS)
 ## libpthread_a_DEPENDENCIES = defs.h crti.S
 libpthread_a_DEPENDENCIES = $(LIBADD_OBJS) $(MACHINE_LIB)
-LIB_COMPILE = $(COMPILE)
+LIB_COMPILE = $(AM_V_CC)$(COMPILE)
 
 libthread_db_a_SOURCES = $(LIB_DB_SOURCES)
 libthread_db_a_CFLAGS = $(AM_CFLAGS)
@@ -100,7 +98,7 @@ install-data-local: install-toollibLIBRARIES
 	  $(DESTDIR)$(toollibdir)/libthread_db.so.1 
 
 AM_CFLAGS = -D_XOPEN_SOURCE=600 -D_GNU_SOURCE=1
-ACLOCAL_AMFLAGS = -I ../../../.. -I ../../../../..
+ACLOCAL_AMFLAGS = -I ../../../.. -I ../../../../.. -I ../../../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
 
 ## PTHREAD_HEADERS=pthread.h semaphore.h

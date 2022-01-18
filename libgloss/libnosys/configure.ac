@@ -12,31 +12,17 @@
 #
 # Process this file with autoconf to produce a configure script.
 #
-AC_PREREQ(2.69)dnl
 AC_INIT(close.c)
 AC_CONFIG_HEADER(config.h)
 
-if test "${enable_shared}" = "yes" ; then
-    echo "Shared libraries not supported for cross compiling, ignored"
-fi
-
-if test "$srcdir" = "." ; then
-  if test "${with_target_subdir}" != "." ; then
-    libgloss_topdir="${srcdir}/${with_multisrctop}../../.."
-  else
-    libgloss_topdir="${srcdir}/${with_multisrctop}../.."
-  fi
-else
-  libgloss_topdir="${srcdir}/../.."
-fi
-AC_CONFIG_AUX_DIR($libgloss_topdir)
+AC_CONFIG_AUX_DIR(../..)
 
 AC_CANONICAL_SYSTEM
 AC_ARG_PROGRAM
 
 AC_PROG_INSTALL
 
-AC_DEFINE(HAVE_GNU_LD)
+AC_DEFINE(HAVE_GNU_LD, 1, [Using GNU LD])
 dnl Make sure syscall names match those being used by newlib
 case "${target}" in
   *-*-cygwin*)
@@ -86,14 +72,14 @@ case "${target}" in
   z8k-*-*)
 	;;
   *)
-	AC_DEFINE(MISSING_SYSCALL_NAMES)
+	AC_DEFINE(MISSING_SYSCALL_NAMES, 1, [Missing syscall names])
 	;;
 esac
 
 dnl Make sure we know if elf format used
 case "${target}" in
   *-*-elf)
-        AC_DEFINE(HAVE_ELF)
+        AC_DEFINE(HAVE_ELF, 1, [Using ELF format])
 
         AC_CACHE_CHECK([for .previous assembler directive],
                          libc_cv_asm_previous_directive, [dnl
@@ -108,7 +94,7 @@ EOF
         rm -f conftest*])
 
 	if test "x${libc_cv_asm_previous_directive}" = "xyes"; then
-          AC_DEFINE(HAVE_ASM_PREVIOUS_DIRECTIVE)
+          AC_DEFINE(HAVE_ASM_PREVIOUS_DIRECTIVE, 1, [.previous directive allowed])
 	fi
 
         AC_CACHE_CHECK([for .popsection assembler directive],
@@ -124,7 +110,7 @@ EOF
         rm -f conftest*])
 
 	if test "x${libc_cv_asm_popsection_directive}" = "xyes"; then
-          AC_DEFINE(HAVE_ASM_POPSECTION_DIRECTIVE)
+          AC_DEFINE(HAVE_ASM_POPSECTION_DIRECTIVE, 1, [.pushsection/.popsection directives allowed])
 	fi
 
         AC_CACHE_CHECK([for section attributes],
@@ -139,7 +125,7 @@ EOF
         fi
         rm -f conftest*])
 	if test "x${libc_cv_section_attributes}" = "xyes"; then
-          AC_DEFINE(HAVE_SECTION_ATTRIBUTES)
+          AC_DEFINE(HAVE_SECTION_ATTRIBUTES, 1, [support for section attributes])
 	fi
         ;;
 esac
@@ -149,7 +135,7 @@ cat > conftest.c <<\EOF
 foo () { }
 EOF
 dnl
-libc_cv_symbol_prefix=none
+libc_cv_symbol_prefix=''
 if AC_TRY_COMMAND([${CC-cc} -S conftest.c -o - | fgrep "\$foo" > /dev/null]);
 then
   libc_cv_symbol_prefix='$'
@@ -160,11 +146,7 @@ else
   fi
 fi
 rm -f conftest* ])
-if test $libc_cv_symbol_prefix != none; then
-  AC_DEFINE_UNQUOTED(__SYMBOL_PREFIX, "$libc_cv_symbol_prefix")
-else
-  AC_DEFINE(__SYMBOL_PREFIX, "")
-fi
+AC_DEFINE_UNQUOTED(__SYMBOL_PREFIX, "$libc_cv_symbol_prefix", [symbol prefix])
 
 LIB_AC_PROG_CC
 AS=${AS-as}
@@ -187,13 +169,12 @@ AC_SUBST(host_makefile_frag_path)
 AC_SUBST_FILE(host_makefile_frag)
 
 AC_CONFIG_FILES(Makefile,
-ac_file=Makefile . ${libgloss_topdir}/config-ml.in,
+ac_file=Makefile . ${srcdir}/../../config-ml.in,
 srcdir=${srcdir}
 target=${target}
 with_multisubdir=${with_multisubdir}
 ac_configure_args="${ac_configure_args} --enable-multilib"
 CONFIG_SHELL=${CONFIG_SHELL-/bin/sh}
-libgloss_topdir=${libgloss_topdir}
 )
 AC_OUTPUT
 

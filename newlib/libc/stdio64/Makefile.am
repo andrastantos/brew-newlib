@@ -1,8 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
-INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+AM_CPPFLAGS = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
 # need a dummy object so objectlist.awk.in will build every time
 GENERAL_SOURCES = dummy.c local64.h
@@ -28,13 +26,13 @@ libstdio64_la_LDFLAGS = -Xcompiler -nostdlib
 if USE_LIBTOOL
 noinst_LTLIBRARIES = libstdio64.la
 libstdio64_la_SOURCES = $(GENERAL_SOURCES) $(ELIX_SOURCES)
-LIB_COMPILE = $(LTCOMPILE)
+LIB_COMPILE = $(AM_V_CC)$(LTCOMPILE)
 noinst_DATA = objectlist.awk.in
 else
 noinst_LIBRARIES = lib.a
 lib_a_SOURCES = $(GENERAL_SOURCES) $(ELIX_SOURCES)
 lib_a_CFLAGS = $(AM_CFLAGS)
-LIB_COMPILE = $(COMPILE)
+LIB_COMPILE = $(AM_V_CC)$(COMPILE)
 noinst_DATA =
 endif # USE_LIBTOOL
 

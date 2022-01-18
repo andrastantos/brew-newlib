@@ -1,8 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
-INCLUDES = -I$(srcdir) -I$(srcdir)/../libc/sys/linux $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+AM_CPPFLAGS = -I$(srcdir) -I$(srcdir)/../libc/sys/linux $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
 if ELIX_LEVEL_1
 LIB_OBJS = 
@@ -21,5 +19,5 @@ EUC_JP_la_LDFLAGS = -module -no-undefined -Xcompiler -Wl,-rpath-link=.. -Xcompil
 install-data-local: install-pkglibLTLIBRARIES $(srcdir)/gconv-modules
 	$(INSTALL_DATA) $(srcdir)/gconv-modules $(DESTDIR)$(pkglibdir)/gconv-modules
 
-ACLOCAL_AMFLAGS = -I .. -I ../..
+ACLOCAL_AMFLAGS = -I .. -I ../.. -I ../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host

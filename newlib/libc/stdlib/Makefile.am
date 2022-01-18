@@ -1,8 +1,6 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
-INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+AM_CPPFLAGS = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
 
 GENERAL_SOURCES = \
 	__adjust.c 	\
@@ -210,7 +208,7 @@ noinst_LTLIBRARIES = libstdlib.la
 libstdlib_la_SOURCES = $(GENERAL_SOURCES) $(EXTENDED_SOURCES) $(ELIX_SOURCES)
 libstdlib_la_LIBADD =  $(LIBADD_OBJS) $(ELIX_OBJS)
 libstdlib_la_DEPENDENCIES = $(LIBADD_OBJS) $(ELIX_OBJS)
-LIB_COMPILE = $(LTCOMPILE)
+LIB_COMPILE = $(AM_V_CC)$(LTCOMPILE)
 noinst_DATA = objectlist.awk.in
 else
 noinst_LIBRARIES = lib.a
@@ -218,7 +216,7 @@ lib_a_SOURCES = $(GENERAL_SOURCES) $(EXTENDED_SOURCES) $(ELIX_SOURCES)
 lib_a_LIBADD = $(LIBADD_OBJS) $(ELIX_OBJS)
 lib_a_CFLAGS = $(AM_CFLAGS)
 lib_a_DEPENDENCIES = $(LIBADD_OBJS) $(ELIX_OBJS)
-LIB_COMPILE = $(COMPILE)
+LIB_COMPILE = $(AM_V_CC)$(COMPILE)
 noinst_DATA =
 endif # USE_LIBTOOL
 

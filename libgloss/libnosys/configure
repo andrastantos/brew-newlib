@@ -1761,24 +1761,14 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+
+
+
 ac_config_headers="$ac_config_headers config.h"
 
 
-if test "${enable_shared}" = "yes" ; then
-    echo "Shared libraries not supported for cross compiling, ignored"
-fi
-
-if test "$srcdir" = "." ; then
-  if test "${with_target_subdir}" != "." ; then
-    libgloss_topdir="${srcdir}/${with_multisrctop}../../.."
-  else
-    libgloss_topdir="${srcdir}/${with_multisrctop}../.."
-  fi
-else
-  libgloss_topdir="${srcdir}/../.."
-fi
 ac_aux_dir=
-for ac_dir in $libgloss_topdir "$srcdir"/$libgloss_topdir; do
+for ac_dir in ../.. "$srcdir"/../..; do
   if test -f "$ac_dir/install-sh"; then
     ac_aux_dir=$ac_dir
     ac_install_sh="$ac_aux_dir/install-sh -c"
@@ -1794,7 +1784,7 @@ for ac_dir in $libgloss_topdir "$srcdir"/$libgloss_topdir; do
   fi
 done
 if test -z "$ac_aux_dir"; then
-  as_fn_error $? "cannot find install-sh, install.sh, or shtool in $libgloss_topdir \"$srcdir\"/$libgloss_topdir" "$LINENO" 5
+  as_fn_error $? "cannot find install-sh, install.sh, or shtool in ../.. \"$srcdir\"/../.." "$LINENO" 5
 fi
 
 # These three variables are undocumented and unsupported,
@@ -2023,6 +2013,7 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 
+
 $as_echo "#define HAVE_GNU_LD 1" >>confdefs.h
 
 case "${target}" in
@@ -2073,14 +2064,16 @@ case "${target}" in
   z8k-*-*)
 	;;
   *)
-	$as_echo "#define MISSING_SYSCALL_NAMES 1" >>confdefs.h
+
+$as_echo "#define MISSING_SYSCALL_NAMES 1" >>confdefs.h
 
 	;;
 esac
 
 case "${target}" in
   *-*-elf)
-        $as_echo "#define HAVE_ELF 1" >>confdefs.h
+
+$as_echo "#define HAVE_ELF 1" >>confdefs.h
 
 
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for .previous assembler directive" >&5
@@ -2107,7 +2100,8 @@ fi
 $as_echo "$libc_cv_asm_previous_directive" >&6; }
 
 	if test "x${libc_cv_asm_previous_directive}" = "xyes"; then
-          $as_echo "#define HAVE_ASM_PREVIOUS_DIRECTIVE 1" >>confdefs.h
+
+$as_echo "#define HAVE_ASM_PREVIOUS_DIRECTIVE 1" >>confdefs.h
 
 	fi
 
@@ -2135,7 +2129,8 @@ fi
 $as_echo "$libc_cv_asm_popsection_directive" >&6; }
 
 	if test "x${libc_cv_asm_popsection_directive}" = "xyes"; then
-          $as_echo "#define HAVE_ASM_POPSECTION_DIRECTIVE 1" >>confdefs.h
+
+$as_echo "#define HAVE_ASM_POPSECTION_DIRECTIVE 1" >>confdefs.h
 
 	fi
 
@@ -2162,7 +2157,8 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_section_attributes" >&5
 $as_echo "$libc_cv_section_attributes" >&6; }
 	if test "x${libc_cv_section_attributes}" = "xyes"; then
-          $as_echo "#define HAVE_SECTION_ATTRIBUTES 1" >>confdefs.h
+
+$as_echo "#define HAVE_SECTION_ATTRIBUTES 1" >>confdefs.h
 
 	fi
         ;;
@@ -2176,7 +2172,7 @@ else
   cat > conftest.c <<\EOF
 foo () { }
 EOF
-libc_cv_symbol_prefix=none
+libc_cv_symbol_prefix=''
 if { ac_try='${CC-cc} -S conftest.c -o - | fgrep "\$foo" > /dev/null'
   { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_try\""; } >&5
   (eval $ac_try) 2>&5
@@ -2200,15 +2196,11 @@ rm -f conftest*
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $libc_cv_symbol_prefix" >&5
 $as_echo "$libc_cv_symbol_prefix" >&6; }
-if test $libc_cv_symbol_prefix != none; then
-  cat >>confdefs.h <<_ACEOF
+
+cat >>confdefs.h <<_ACEOF
 #define __SYMBOL_PREFIX "$libc_cv_symbol_prefix"
 _ACEOF
 
-else
-  $as_echo "#define __SYMBOL_PREFIX \"\"" >>confdefs.h
-
-fi
 
 rm -rf .tst 2>/dev/null
 mkdir .tst 2>/dev/null
@@ -3444,7 +3436,6 @@ target=${target}
 with_multisubdir=${with_multisubdir}
 ac_configure_args="${ac_configure_args} --enable-multilib"
 CONFIG_SHELL=${CONFIG_SHELL-/bin/sh}
-libgloss_topdir=${libgloss_topdir}
 
 
 _ACEOF
@@ -4145,7 +4136,7 @@ $as_echo X"$file" |
   done
 }
  ;;
-    "Makefile":F) ac_file=Makefile . ${libgloss_topdir}/config-ml.in ;;
+    "Makefile":F) ac_file=Makefile . ${srcdir}/../../config-ml.in ;;
 
   esac
 done # for ac_tag

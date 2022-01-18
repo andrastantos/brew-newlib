@@ -1,7 +1,5 @@
 ## Process this file with automake to generate Makefile.in
 
-AUTOMAKE_OPTIONS = cygnus
-
 SUBDIRS = $(libm_machine_dir) .
 
 if HAVE_LIBM_MACHINE_DIR
@@ -24,5 +22,5 @@ doc:
 
 docbook:
 
-ACLOCAL_AMFLAGS = -I ../.. -I ../../..
+ACLOCAL_AMFLAGS = -I ../.. -I ../../.. -I ../../../config
 CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host

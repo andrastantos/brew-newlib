@@ -16,7 +16,7 @@
 /* Stack is pre-decrement for push, and post-increment for pop */
 
   .macro CALL label, temp_reg=$r3
-  \temp_reg <- $pc + 16
+  \temp_reg <- $pc + 20
   $sp <- $sp - 4
   mem[$sp] <- \temp_reg
   $pc <- \label

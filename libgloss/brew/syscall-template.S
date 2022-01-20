@@ -38,14 +38,18 @@
  * with the addition of $r3 pointing to errno on entry.
  */
 
-  .globl   FN_NAME
+  .global  FN_NAME
   .extern  errno
   .type    FN_NAME,@function
   .text
 FN_NAME:
+  $sp <- $sp - 4
+  mem[$sp] <- $r3
   $r3 <- errno
   syscall
   .hword  SYSCALL_NO
-  RET
+  $r3 <- mem[$sp]
+  $sp <- $sp + 4
+  $pc <- $r3
 .Lend:
   .size    FN_NAME,.Lend-FN_NAME

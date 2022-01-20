@@ -15,16 +15,14 @@
 
 /* Stack is pre-decrement for push, and post-increment for pop */
 
-  .macro CALL label, temp_reg=$r3
-  \temp_reg <- $pc + 20
-  $sp <- $sp - 4
-  mem[$sp] <- \temp_reg
+  .macro CALL label
+  $r3 <- 1f
   $pc <- \label
+1:
   .endm
 
   .macro RET
-  $sp <- $sp + 4
-  $pc <- mem[$sp,(-4)]
+  $pc <- $r3
   .endm
 
   .macro SYSCALLM syscall_no

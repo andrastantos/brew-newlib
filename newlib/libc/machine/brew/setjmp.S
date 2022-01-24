@@ -18,51 +18,41 @@
 # Currently, those are $r8...$14.
 # On top of this, of course we'll have to preserve the stack-frame, so $sp and
 # $fp goes in here too.
+# Finally we'll have to save the return address, which is in $r3
 #
 # Thus, the jmpbuf layout is the following:
 #
 # Register        jmpbuf offset
-#   $fp             0x00
-#   $sp             0x04
-#   $r8             0x08
-#   $r9             0x0c
-#   $r10            0x10
-#   $r11            0x14
-#   $r12            0x18
-#   $r13            0x1c
-#   $r14            0x20
-
-/* Stack is pre-decrement for push, and post-increment for pop */
-
-  .macro CALL label, temp_reg=$r3
-  \temp_reg <- $pc + 16
-  $sp <- $sp - 4
-  mem[$sp] <- \temp_reg
-  $pc <- \label
-  .endm
-
-  .macro RET
-  $sp <- $sp + 4
-  $pc <- mem[$sp,(-4)]
-  .endm
+#   $sp             0x00
+#   $fp             0x04
+#   $r3             0x08
+#   $r8             0x0c
+#   $r9             0x10
+#   $r10            0x14
+#   $r11            0x18
+#   $r12            0x1c
+#   $r13            0x20
+#   $r14            0x24
 
 # Upon call, $r4 is set to the buffer address
+#            $r3 is set to the return address
 # Upon exit, $r4 is set to 0.
   .text
   .global setjmp
   .type   setjmp,@function
 setjmp:
-  mem[$r4] <- $fp
-  mem[$r4, 0x04] <- $sp
-  mem[$r4, 0x08] <- $r8
-  mem[$r4, 0x0c] <- $r9
-  mem[$r4, 0x10] <- $r10
-  mem[$r4, 0x14] <- $r11
-  mem[$r4, 0x18] <- $r12
-  mem[$r4, 0x1c] <- $r13
-  mem[$r4, 0x20] <- $r14
-  $r4 <- $r4 - $r4
-  RET
+  mem[$r4] <- $sp
+  mem[$r4, 0x04] <- $fp
+  mem[$r4, 0x08] <- $r3
+  mem[$r4, 0x0c] <- $r8
+  mem[$r4, 0x10] <- $r9
+  mem[$r4, 0x14] <- $r10
+  mem[$r4, 0x18] <- $r11
+  mem[$r4, 0x1c] <- $r12
+  mem[$r4, 0x20] <- $r13
+  mem[$r4, 0x24] <- $r14
+  $r4 <- $r4 - $r4 # Set return value to 0
+  $pc <- $r3 # return
 .Lend1:
   .size  setjmp,.Lend1-setjmp
 
@@ -74,20 +64,21 @@ setjmp:
   .global  longjmp
   .type  longjmp,@function
 longjmp:
-  $fp  <- mem[$r4]
-  $sp  <- mem[$r4, 0x04]
-  $r8  <- mem[$r4, 0x08]
-  $r9  <- mem[$r4, 0x0c]
-  $r10 <- mem[$r4, 0x10]
-  $r11 <- mem[$r4, 0x14]
-  $r12 <- mem[$r4, 0x18]
-  $r13 <- mem[$r4, 0x1c]
-  $r14 <- mem[$r4, 0x20]
+  $sp  <- mem[$r4]
+  $fp  <- mem[$r4, 0x04]
+  $r3  <- mem[$r4, 0x08]
+  $r8  <- mem[$r4, 0x0c]
+  $r9  <- mem[$r4, 0x10]
+  $r10 <- mem[$r4, 0x14]
+  $r11 <- mem[$r4, 0x18]
+  $r12 <- mem[$r4, 0x1c]
+  $r13 <- mem[$r4, 0x20]
+  $r14 <- mem[$r4, 0x24]
   $r4 <- $r5
   if $r4 == 0 $pc <- .Lreturn1
-  RET
+  $pc <- $r3
 .Lreturn1:
   $r4 <- $r4 + 1
-  RET
+  $pc <- $r3
 .Lend2:
   .size  longjmp,.Lend2-longjmp

@@ -43,6 +43,11 @@
   .type    FN_NAME,@function
   .text
 FN_NAME:
+  /* NOTE: if stack changes - for example if these things get inlined, 
+     parameters on stack (open comes to mind) would shift too. So, if
+     this code is touched, interp.c in binutils would need to be changed
+     accordingly
+  */
   $sp <- $sp - 4
   mem[$sp] <- $r3
   $r3 <- errno

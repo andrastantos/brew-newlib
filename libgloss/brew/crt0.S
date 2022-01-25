@@ -13,11 +13,23 @@
  * they apply.
  */
 
+#include <newlib.h> // for configuration-time defines
 #include "macros.S"
+
+#ifdef HAVE_INITFINI_ARRAY
+#define _init	__libc_init_array
+#define _fini	__libc_fini_array
+#else
+#error "BREW doesn't support a configuration where .init is used. At least not at the moment."
+#endif
 
   .globl  __start
   .weak  _start
+#ifdef HAVE_INITFINI_ARRAY
+  .section ".init"
+#else
   .text
+#endif
   .type  __start,@function
 __start:
 _start:

@@ -269,7 +269,9 @@ case "${host_cpu}" in
 	;;
   brew)
 	machine_dir=brew
-        ;;
+  # We actually do have those sections, but we don't use them other then to put _start in there.
+  have_init_fini=no
+  ;;
   msp430*)
 	newlib_cflags="${newlib_cflags} -DPREFER_SIZE_OVER_SPEED -DSMALL_MEMORY"
 	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections "

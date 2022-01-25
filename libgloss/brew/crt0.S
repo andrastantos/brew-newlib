@@ -50,12 +50,17 @@ _start:
   $r4 <- _fini
   CALL atexit
   
-  /* Set argc and argv.  These are populated by the simulator.  */
-  $r4 <- 0x4
-  $r5 <- 0x8
+  /* Set argc and argv to be empty. */
+  /* FIXME: this later on will be something we want the simulator/executive to set up for us */
+  $r4 <- 0x0
+  $r5 <- .Lempty_argv
   
   CALL main
   CALL exit
 
 .Lend:
   .size  __start,(.Lend-__start)
+
+  .data
+.Lempty_argv:
+  .long 0

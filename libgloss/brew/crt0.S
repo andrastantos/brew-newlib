@@ -40,7 +40,7 @@ _start:
   $r4 <- __bss_start__
   $r5 <- 0
   $r6 <- __bss_end__
-  $r6 <- $r6 - $r2
+  $r6 <- $r6 - $r4
   CALL memset
 
   /* Call _init to invoke static constructors, etc.  */
@@ -54,7 +54,7 @@ _start:
   /* FIXME: this later on will be something we want the simulator/executive to set up for us */
   $r4 <- 0x0
   $r5 <- .Lempty_argv
-  
+  $sp <- $sp - 8 /* Allocate space on stack for arguments argc and argv */
   CALL main
   CALL exit
 

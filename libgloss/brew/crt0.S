@@ -41,6 +41,7 @@ _start:
   $r5 <- 0
   $r6 <- __bss_end__
   $r6 <- $r6 - $r4
+  $sp <- $sp - 12 /* Allocate space on stack for arguments */
   CALL memset
 
   /* Call _init to invoke static constructors, etc.  */
@@ -48,6 +49,7 @@ _start:
   
   /* Call _fini at exit time for static destructors.  */
   $r4 <- _fini
+  $sp <- $sp - 4 /* Allocate space on stack for arguments */
   CALL atexit
   
   /* Set argc and argv to be empty. */

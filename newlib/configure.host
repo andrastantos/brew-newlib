@@ -853,7 +853,7 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
 	default_newlib_io_long_long="yes"
 	newlib_cflags="${newlib_cflags} -Os -DPREFER_SIZE_OVER_SPEED -DSMALL_MEMORY"
         ;;
-  brew-*-elf*)
+  brew-*-elf* | brew-*-newlib*)
         syscall_dir=syscalls
 	default_newlib_io_long_long="yes"
         ;;

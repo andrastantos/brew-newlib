@@ -995,6 +995,9 @@ case "${target}" in
   *-*-freebsd*)
     noconfigdirs="$noconfigdirs target-newlib target-libgloss"
     ;;
+  # Allow building newlib against linux, if specifically asked for
+  *-linux-newlib)
+    ;;
   *-*-linux* | *-*-gnu* | *-*-k*bsd*-gnu | *-*-kopensolaris*-gnu)
     noconfigdirs="$noconfigdirs target-newlib target-libgloss"
     ;;

@@ -358,7 +358,7 @@
 #endif
 #endif
 
-#ifdef __brew__
+#ifdef __BREW__
 #define __IEEE_LITTLE_ENDIAN
 #endif
 

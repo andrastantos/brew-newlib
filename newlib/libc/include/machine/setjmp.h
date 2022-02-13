@@ -241,8 +241,8 @@ _BEGIN_STD_C
 #define _JBLEN 10
 #endif
 
-#ifdef __brew__
-#define _JBLEN 10
+#ifdef __BREW__
+#define _JBLEN 7
 #endif
 
 

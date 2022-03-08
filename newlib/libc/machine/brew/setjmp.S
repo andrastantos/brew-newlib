@@ -25,11 +25,16 @@
 # Register        jmpbuf offset
 #   $sp             0x00
 #   $fp             0x04
-#   $r3             0x08
-#   $r11            0x0c
-#   $r12            0x10
-#   $r13            0x14
-#   $r14            0x18
+#   $r2             0x08
+#   $r3             0x0c
+#   $r11            0x10
+#   $r12            0x14
+#   $r13            0x18
+#   $r14            0x1c
+#
+# The size of the jump buffer is set by:
+#    #define _JBLEN 8
+# in ../setjmp.h
 
 # Upon call, $r4 is set to the buffer address
 #            $r3 is set to the return address
@@ -40,11 +45,12 @@
 setjmp:
   mem[$r4] <- $sp
   mem[$r4, 0x04] <- $fp
-  mem[$r4, 0x08] <- $r3
-  mem[$r4, 0x0c] <- $r11
-  mem[$r4, 0x10] <- $r12
-  mem[$r4, 0x14] <- $r13
-  mem[$r4, 0x18] <- $r14
+  mem[$r4, 0x08] <- $r2
+  mem[$r4, 0x0c] <- $r3
+  mem[$r4, 0x10] <- $r11
+  mem[$r4, 0x14] <- $r12
+  mem[$r4, 0x18] <- $r13
+  mem[$r4, 0x1c] <- $r14
   $r4 <- $r4 - $r4 # Set return value to 0
   $pc <- $r3 # return
 .Lend1:
@@ -60,11 +66,12 @@ setjmp:
 longjmp:
   $sp  <- mem[$r4]
   $fp  <- mem[$r4, 0x04]
-  $r3  <- mem[$r4, 0x08]
-  $r11 <- mem[$r4, 0x0c]
-  $r12 <- mem[$r4, 0x10]
-  $r13 <- mem[$r4, 0x14]
-  $r14 <- mem[$r4, 0x18]
+  $r2  <- mem[$r4, 0x08]
+  $r3  <- mem[$r4, 0x0c]
+  $r11 <- mem[$r4, 0x10]
+  $r12 <- mem[$r4, 0x14]
+  $r13 <- mem[$r4, 0x18]
+  $r14 <- mem[$r4, 0x1c]
   $r4 <- $r5
   if $r4 == 0 $pc <- .Lreturn1
   $pc <- $r3

@@ -1,5 +1,5 @@
 /* crt0.S -- startup file for brew
- * 
+ *
  * Copyright (c) 2022  Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
@@ -33,30 +33,30 @@
   .type  __start,@function
 __start:
 _start:
-  $sp <- _stack    /* set the top of stack */
-  $fp <- 0         /* zero fp to allow unwinders to stop */
+  $sp <- _stack     /* set the top of stack */
+  $fp <- $fp ^ $fp  /* zero fp to allow unwinders to stop */
 
   /* zero the bss area */
   $r4 <- __bss_start__
-  $r5 <- 0
+  $r5 <- $r5 ^ $r5
   $r6 <- __bss_end__
   $r6 <- $r6 - $r4
-  $sp <- $sp - 12 /* Allocate space on stack for arguments */
+  $sp <- short $sp + (-12) /* Allocate space on stack for arguments */
   CALL memset
 
   /* Call _init to invoke static constructors, etc.  */
   CALL _init
-  
+
   /* Call _fini at exit time for static destructors.  */
   $r4 <- _fini
-  $sp <- $sp - 4 /* Allocate space on stack for arguments */
+  $sp <- short $sp + (-4) /* Allocate space on stack for arguments */
   CALL atexit
-  
+
   /* Set argc and argv to be empty. */
   /* FIXME: this later on will be something we want the simulator/executive to set up for us */
   $r4 <- 0x0
   $r5 <- .Lempty_argv
-  $sp <- $sp - 8 /* Allocate space on stack for arguments argc and argv */
+  $sp <- short $sp + (-8) /* Allocate space on stack for arguments argc and argv */
   CALL main
   CALL exit
 

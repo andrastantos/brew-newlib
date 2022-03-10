@@ -1,5 +1,5 @@
 /* macros.S -- common macros for brew.
- * 
+ *
  * Copyright (c) 2022  Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
@@ -16,13 +16,13 @@
 /* Stack is pre-decrement for push, and post-increment for pop */
 
   .macro CALL label
-  $r3 <- 1f
+  $lr <- 1f
   $pc <- \label
 1:
   .endm
 
   .macro RET
-  $pc <- $r3
+  $pc <- $lr
   .endm
 
   .macro SYSCALLM syscall_no

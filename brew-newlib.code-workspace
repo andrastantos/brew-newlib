@@ -8,6 +8,22 @@
         "editor.detectIndentation": false,
 				"editor.tabSize": 2,
 	"files.associations": {
+    "unistd.h": "c",
+    "random": "c",
+    "thunk1.C": "cpp",
+    "constexpr-compare2.C": "cpp",
+    "pr100772-b.C": "cpp",
+    "pr95823.C": "cpp",
+    "initlist48.C": "cpp",
+    "decomp37.C": "cpp",
+    "pr103989.C": "cpp",
+    "Wfree-nonheap-object-3.C": "cpp",
+    "anonymous-namespace-3.C": "cpp",
+    "xtreme-header-2_b.C": "cpp",
+    "xtreme-tr1_b.C": "cpp",
+    "headers1.C": "cpp",
+    "thunk1b.C": "cpp",
+    "dirent.h": "c"
   }
 	}
 }

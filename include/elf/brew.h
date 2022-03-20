@@ -26,7 +26,7 @@
 /* NOTE: if these types are changed, the corresponding case in readelf.c  */
 /*       (around line 14170) needs to change as well.                     */
 /*       Right now, the only relocation we have is a 32-bit absolute one, */
-/*       which is type 1. Later we might have a 32-bit                    */
+/*       which is type 1.                                                 */
 /*       Later we might have a 32-bit PC-relative relocation as well.     */
 /*       Let's make sure that that one gets type 2 or something.          */
 /*       If NONE moves around, the case around line 14657 in readelf.c    */
@@ -34,8 +34,10 @@
 
 /* Relocation types.  */
 START_RELOC_NUMBERS (elf_brew_reloc_type)
-  RELOC_NUMBER (R_BREW_NONE, 0)
-  RELOC_NUMBER (R_BREW_32, 1)
+  RELOC_NUMBER(R_BREW_NONE,      0)
+  RELOC_NUMBER(R_BREW_32,        1)
+  RELOC_NUMBER(R_BREW_16,        2)
+  RELOC_NUMBER(R_BREW_16_SPCREL, 3)
 END_RELOC_NUMBERS (R_BREW_max)
 
 #endif /* _ELF_BREW_H */

@@ -1,6 +1,6 @@
 /*
  * syscall-template.S -- generic syscall interface for brew
- * 
+ *
  * Copyright (c) 2022 Andras Tantos
  *
  * The authors hereby grant permission to use, copy, modify, distribute,
@@ -20,22 +20,22 @@
 
 /* Every syscall follows the same, generic layout:
  * Input:
- * $r3        -- pointer to errno
+ * $lr        -- pointer to errno
  * $r4        -- first argument (if any)
  * $r5        -- second argument (if any)
  * $r6        -- third argument (if any)
  * $r7        -- fourth argument (if any)
  *            -- all other arguments (if any) are on the stack.
- * 
+ *
  * Output:
  * $r4        -- first return value (if any)
  * $r5        -- second return value (if any)
  * $r6        -- third return value (if any)
  * $r7        -- fourth return value (if any)
  * errno      -- updated as(if) needed
- * 
+ *
  * In other words, this is normal function calling conventions,
- * with the addition of $r3 pointing to errno on entry.
+ * with the addition of $lr pointing to errno on entry.
  */
 
   .global  FN_NAME
@@ -43,18 +43,18 @@
   .type    FN_NAME,@function
   .text
 FN_NAME:
-  /* NOTE: if stack changes - for example if these things get inlined, 
+  /* NOTE: if stack changes - for example if these things get inlined,
      parameters on stack (open comes to mind) would shift too. So, if
      this code is touched, interp.c in binutils would need to be changed
      accordingly
   */
-  $sp <- $sp - 4
-  mem[$sp] <- $r3
-  $r3 <- errno
+  $sp <- short $sp + (-4)
+  mem[$sp] <- $lr
+  $lr <- errno
   syscall
   .hword  SYSCALL_NO
-  $r3 <- mem[$sp]
-  $sp <- $sp + 4
-  $pc <- $r3
+  $lr <- mem[$sp]
+  $sp <- short $sp + 4
+  $pc <- $lr
 .Lend:
   .size    FN_NAME,.Lend-FN_NAME

@@ -584,6 +584,9 @@ case "${host}" in
   moxie*)
         sys_dir=
         ;;
+  brew*-linux*)
+        sys_dir=linux
+        ;;
   brew*)
         sys_dir=
         ;;

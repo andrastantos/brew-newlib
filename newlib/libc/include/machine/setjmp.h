@@ -242,7 +242,7 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __BREW__
-#define _JBLEN 7
+#define _JBLEN 8
 #endif
 
 
@@ -251,7 +251,7 @@ _BEGIN_STD_C
 #endif
 
 #if (defined(__CR16__) || defined(__CR16C__) ||defined(__CR16CP__))
-/* r6, r7, r8, r9, r10, r11, r12 (r12L, r12H), 
+/* r6, r7, r8, r9, r10, r11, r12 (r12L, r12H),
  * r13 (r13L, r13H), ra(raL, raH), sp(spL, spH) */
 #define _JBLEN 14
 #define _JBTYPE unsigned short
@@ -288,7 +288,7 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __SPU__
-#define _JBLEN 50 
+#define _JBLEN 50
 #define _JBTYPE __vector signed int
 #endif
 
@@ -345,7 +345,7 @@ _BEGIN_STD_C
  *   2) Function-call versions.
  *
  * The built-in versions are used most of the time.  When used, gcc replaces
- * calls to setjmp()/longjmp() with inline assembly code.  The built-in 
+ * calls to setjmp()/longjmp() with inline assembly code.  The built-in
  * versions save/restore a variable number of registers.
 
  * _JBLEN is set to 40 to be ultra-safe with the built-in versions.

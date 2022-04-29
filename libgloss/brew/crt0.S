@@ -34,13 +34,13 @@
 __start:
 _start:
   $sp <- _stack     /* set the top of stack */
-  $fp <- $fp ^ $fp  /* zero fp to allow unwinders to stop */
+  $fp <- tiny 0     /* zero fp to allow unwinders to stop */
 
   /* zero the bss area */
-  $r4 <- __bss_start__
-  $r5 <- $r5 ^ $r5
-  $r6 <- __bss_end__
-  $r6 <- $r6 - $r4
+  $a0 <- __bss_start__
+  $a1 <- tiny 0
+  $a2 <- __bss_end__
+  $a2 <- $a2 - $a0
   $sp <- short $sp + (-12) /* Allocate space on stack for arguments */
   CALL memset
 
@@ -48,14 +48,14 @@ _start:
   CALL _init
 
   /* Call _fini at exit time for static destructors.  */
-  $r4 <- _fini
+  $a0 <- _fini
   $sp <- short $sp + (-4) /* Allocate space on stack for arguments */
   CALL atexit
 
   /* Set argc and argv to be empty. */
   /* FIXME: this later on will be something we want the simulator/executive to set up for us */
-  $r4 <- 0x0
-  $r5 <- .Lempty_argv
+  $a0 <- tiny 0
+  $a1 <- .Lempty_argv
   $sp <- short $sp + (-8) /* Allocate space on stack for arguments argc and argv */
   CALL main
   CALL exit

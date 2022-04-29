@@ -15,7 +15,6 @@
 #
 # During setjmp we need to save all registers not marked in CALL_USED_REGISTERS
 # for gcc, that is, all registers that that are available across function calls.
-# Currently, those are $r11...$14.
 # On top of this, of course we'll have to preserve the stack-frame, so $sp and
 # $fp goes in here too.
 # Finally we'll have to save the return address, which is in $lr
@@ -26,15 +25,14 @@
 #   $sp             0x00
 #   $fp             0x04
 #   $lr             0x08
-#   $r3             0x0c
-#   $r11            0x10
-#   $r12            0x14
-#   $r13            0x18
-#   $r14            0x1c
+#   $r8             0x0c
+#   $r9             0x10
+#   $r10            0x14
+#   $r11            0x18
 #
 # The size of the jump buffer is set by:
-#    #define _JBLEN 8
-# in ../setjmp.h
+#    #define _JBLEN 7
+# in ../../include/machine/setjmp.h
 
 # Upon call, $r4 is set to the buffer address
 #            $lr is set to the return address
@@ -43,15 +41,14 @@
   .global setjmp
   .type   setjmp,@function
 setjmp:
-  mem[$r4] <- $sp
-  mem[$r4, 0x04] <- $fp
-  mem[$r4, 0x08] <- $lr
-  mem[$r4, 0x0c] <- $r3
-  mem[$r4, 0x10] <- $r11
-  mem[$r4, 0x14] <- $r12
-  mem[$r4, 0x18] <- $r13
-  mem[$r4, 0x1c] <- $r14
-  $r4 <- $r4 - $r4 # Set return value to 0
+  mem[$a0] <- $sp
+  mem[$a0 + 0x04] <- $fp
+  mem[$a0 + 0x08] <- $lr
+  mem[$a0 + 0x0c] <- $r8
+  mem[$a0 + 0x10] <- $r9
+  mem[$a0 + 0x14] <- $r10
+  mem[$a0 + 0x18] <- $r11
+  $a0 <- tiny 0 # Set return value to 0
   $pc <- $lr # return
 .Lend1:
   .size  setjmp,.Lend1-setjmp
@@ -64,19 +61,18 @@ setjmp:
   .global  longjmp
   .type  longjmp,@function
 longjmp:
-  $sp  <- mem[$r4]
-  $fp  <- mem[$r4, 0x04]
-  $lr  <- mem[$r4, 0x08]
-  $r3  <- mem[$r4, 0x0c]
-  $r11 <- mem[$r4, 0x10]
-  $r12 <- mem[$r4, 0x14]
-  $r13 <- mem[$r4, 0x18]
-  $r14 <- mem[$r4, 0x1c]
-  $r4 <- $r5
-  if $r4 == 0 $pc <- .Lreturn1
+  $sp  <- mem[$a0]
+  $fp  <- mem[$a0 + 0x04]
+  $lr  <- mem[$a0 + 0x08]
+  $r8  <- mem[$a0 + 0x0c]
+  $r9  <- mem[$a0 + 0x10]
+  $r10 <- mem[$a0 + 0x14]
+  $r11 <- mem[$a0 + 0x18]
+  $a0 <- $a1
+  if $a0 == 0 $pc <- .Lreturn1
   $pc <- $lr
 .Lreturn1:
-  $r4 <- $r4 + 1
+  $a0 <- $a0 + 1
   $pc <- $lr
 .Lend2:
   .size  longjmp,.Lend2-longjmp

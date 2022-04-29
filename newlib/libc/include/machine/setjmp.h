@@ -242,7 +242,7 @@ _BEGIN_STD_C
 #endif
 
 #ifdef __BREW__
-#define _JBLEN 8
+#define _JBLEN 7
 #endif
 
 

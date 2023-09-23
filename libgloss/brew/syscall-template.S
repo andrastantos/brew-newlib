@@ -20,22 +20,22 @@
 
 /* Every syscall follows the same, generic layout:
  * Input:
- * $lr        -- pointer to errno
  * $r4        -- first argument (if any)
  * $r5        -- second argument (if any)
  * $r6        -- third argument (if any)
  * $r7        -- fourth argument (if any)
  *            -- all other arguments (if any) are on the stack.
+ * $lr        -- current value of errno
  *
  * Output:
  * $r4        -- first return value (if any)
  * $r5        -- second return value (if any)
  * $r6        -- third return value (if any)
  * $r7        -- fourth return value (if any)
- * errno      -- updated as(if) needed
+ * $lr        -- updated value of errno
  *
  * In other words, this is normal function calling conventions,
- * with the addition of $lr pointing to errno on entry.
+ * with the addition of $lr used for errno.
  */
 
   .global  FN_NAME
@@ -50,9 +50,10 @@ FN_NAME:
   */
   $sp <- short $sp + (-4)
   mem[$sp] <- $lr
-  $lr <- errno
+  $lr <- mem[errno]
   syscall
   .hword  SYSCALL_NO
+  mem[errno] <- $lr
   $lr <- mem[$sp]
   $sp <- short $sp + 4
   $pc <- $lr

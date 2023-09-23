@@ -33,7 +33,11 @@
   .type  __start,@function
 __start:
 _start:
-  $sp <- _stack     /* set the top of stack */
+  /*
+    For now, let's assume we never set up the stack, not even on the simulator
+    --> the simulator will have to set it up to something meaningful.
+  $sp <- _stack
+  */
   $fp <- tiny 0     /* zero fp to allow unwinders to stop */
 
   /* zero the bss area */

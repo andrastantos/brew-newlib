@@ -21,6 +21,8 @@
 #define TCSETS     0x5402
 #define TCSETSW    0x5403
 #define TCSETSF    0x5404
+#define FIONREAD   0x541B
+#define TIOCINQ    FIONREAD
 
 #ifdef __cplusplus
 extern "C" {

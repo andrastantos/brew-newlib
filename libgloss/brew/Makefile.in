@@ -62,8 +62,8 @@ LD_SCRIPTS = brew-elf-common.ld sim.ld
 
 @BUILD_CRT0_TRUE@CRT0		= crt0.o
 @BUILD_CRT0_TRUE@CRT0_INSTALL	= install-crt0
-@BUILD_CRT0_FALSE@CRT0		= 
-@BUILD_CRT0_FALSE@CRT0_INSTALL	= 
+@BUILD_CRT0_FALSE@CRT0		=
+@BUILD_CRT0_FALSE@CRT0_INSTALL	=
 
 BREW_BSP = libbrew.a
 BREW_OBJS = \
@@ -86,7 +86,16 @@ BREW_OBJS = \
 	times.o \
 	link.o \
 	isatty.o \
-	sbrk.o
+	ioctl.o \
+	sbrk.o \
+	termios.o
+
+
+BREW_INCLUDES =
+
+BREW_SYS_INCLUDES = \
+	termios.h \
+	ioctl.h
 
 #### Host specific Makefile fragment comes in here.
 @host_makefile_frag@
@@ -138,12 +147,23 @@ link.o: $(srcdir)/syscall-template.S
 isatty.o: $(srcdir)/syscall-template.S
 	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_isatty -D SYSCALL_NO=BREW_isatty -c $<
 
+ioctl.o: $(srcdir)/syscall-template.S
+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=ioctl -D SYSCALL_NO=BREW_ioctl -c $<
+
 sbrk.o: $(srcdir)/sbrk.c
+
+termios.o: $(srcdir)/termios.c
 
 install: ${CRT0_INSTALL} $($(CPU)_INSTALL)
 	$(INSTALL_DATA) $(BREW_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(BREW_BSP)
 	for x in ${LD_SCRIPTS}; do \
 	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/lib/$$x; \
+	done;
+	for x in ${BREW_INCLUDES}; do \
+	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/include/$$x; \
+	done;
+	for x in ${BREW_SYS_INCLUDES}; do \
+	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/include/sys/$$x; \
 	done;
 
 install-crt0:

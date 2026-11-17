@@ -16,7 +16,7 @@
 #include <newlib.h> // for configuration-time defines
 #include "macros.S"
 
-#ifdef HAVE_INITFINI_ARRAY
+#ifdef _HAVE_INITFINI_ARRAY /* renamed from HAVE_INITFINI_ARRAY in newlib 437c5c508 */
 #define _init	__libc_init_array
 #define _fini	__libc_fini_array
 #else
@@ -25,7 +25,7 @@
 
   .globl  __start
   .weak  _start
-#ifdef HAVE_INITFINI_ARRAY
+#ifdef _HAVE_INITFINI_ARRAY /* renamed from HAVE_INITFINI_ARRAY in newlib 437c5c508 */
   .section ".init"
 #else
   .text

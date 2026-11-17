@@ -58,7 +58,7 @@ dtable_init ()
     cygheap->fdtab.extend (NOFILE_INCR, 0);
 }
 
-void __stdcall
+void
 set_std_handle (int fd)
 {
   fhandler_base *fh = cygheap->fdtab[fd];
@@ -422,6 +422,7 @@ dtable::init_std_file_from_handle (int fd, HANDLE handle)
       cygheap->fdtab[fd]->inc_refcnt ();
       set_std_handle (fd);
       paranoid_printf ("fd %d, handle %p", fd, handle);
+      fh->post_open_setup (fd);
     }
 }
 
@@ -580,6 +581,9 @@ fh_alloc (path_conv& pc)
 	  break;
 	case FH_DEV:
 	  fh = cnew (fhandler_dev);
+	  break;
+	case FH_DEV_FD:
+	  fh = cnew (fhandler_dev_fd);
 	  break;
 	case FH_CYGDRIVE:
 	  fh = cnew (fhandler_cygdrive);

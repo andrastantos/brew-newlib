@@ -58,3 +58,6 @@ FN_NAME:
   $pc <- $lr
 .Lend:
   .size    FN_NAME,.Lend-FN_NAME
+
+/* This object does not need an executable stack.  */
+  .section .note.GNU-stack,"",@progbits

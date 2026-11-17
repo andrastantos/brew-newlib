@@ -80,3 +80,6 @@ longjmp:
   $pc <- $lr
 .Lend2:
   .size  longjmp,.Lend2-longjmp
+
+/* This object does not need an executable stack.  */
+  .section .note.GNU-stack,"",@progbits

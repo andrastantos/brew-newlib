@@ -66,3 +66,6 @@ _start:
   .data
 .Lempty_argv:
   .long 0
+
+/* This object does not need an executable stack.  */
+  .section .note.GNU-stack,"",@progbits

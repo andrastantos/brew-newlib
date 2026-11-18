@@ -1,19 +1,19 @@
-/* Copyright (c) 2012-2013 Red Hat Incorporated.
+/* Copyright (c) 2012-2015 Red Hat Incorporated.
    All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
-   are met: 
+   are met:
 
-     Redistributions of source code must retain the above copyright 
+     Redistributions of source code must retain the above copyright
      notice, this list of conditions and the following disclaimer.
 
      Redistributions in binary form must reproduce the above copyright
      notice, this list of conditions and the following disclaimer in the
      documentation and/or other materials provided with the distribution.
 
-     The name of Red Hat Incorporated may not be used to endorse 
-     or promote products derived from this software without specific 
+     The name of Red Hat Incorporated may not be used to endorse
+     or promote products derived from this software without specific
      prior written permission.
 
    This software is provided by the copyright holders and contributors
@@ -30,15 +30,17 @@
 
 #include "memmodel.h"
 
-	.section ".crt_bss", "ax", @progbits
+;; This function is responsible for initializing the contents of the
+;; .bss section.
 
-	.global __crt0_init_bss
-__crt0_init_bss:	
-	
+START_CRT_FUNC 0100 init_bss
+
 	mov_	#__bssstart, R12
 	clr.w	R13
-	mov.w	#__bsssize, R14
+	mov_	#__bsssize, R14
 #ifdef __MSP430X_LARGE__
-	clr.w	R15		; We assume that __bsssize is never > 64M
+	clr.w	R15		; We assume that __bsssize is never > 64K
 #endif
 	call_	#memset
+
+END_CRT_FUNC	init_bss

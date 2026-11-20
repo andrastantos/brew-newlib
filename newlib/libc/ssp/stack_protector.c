@@ -31,8 +31,11 @@ __stack_chk_init (void)
 }
 #endif
 
+/* Weak, so that a program can supply its own handler: __stack_chk_guard
+   lives in this object too, so any -fstack-protector code pulls it in, and
+   a strong definition here would then clash with the program's.  */
 void
-__attribute__((__noreturn__))
+__attribute__((__weak__, __noreturn__))
 __stack_chk_fail (void)
 {
   char msg[] = "*** stack smashing detected ***: terminated\n";

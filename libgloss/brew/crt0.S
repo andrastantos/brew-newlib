@@ -44,13 +44,16 @@ _start:
   $sp <- short $sp + (-12) /* Allocate space on stack for arguments */
   CALL memset
 
-  /* Call _init to invoke static constructors, etc.  */
-  CALL _init
-
-  /* Call _fini at exit time for static destructors.  */
+  /* Call _fini at exit time for static destructors.  Register it before
+     _init runs, so that it runs after everything registered during
+     initialization (C++ static objects' destructors via __cxa_atexit):
+     handlers run in reverse order of registration.  */
   $r4 <- _fini
   $sp <- short $sp + (-4) /* Allocate space on stack for arguments */
   CALL atexit
+
+  /* Call _init to invoke static constructors, etc.  */
+  CALL _init
 
   /* Set argc and argv to be empty. */
   /* FIXME: this later on will be something we want the simulator/executive to set up for us */

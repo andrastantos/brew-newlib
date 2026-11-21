@@ -56,9 +56,10 @@ _start:
 
      Each string takes its length plus the NUL, rounded up to 4 bytes.
      The syscalls preserve every register except $r4 (the result) and
-     $lr (errno), so $r8...$r11 survive them.  $r8 = argc, $r9 = index,
+     $lr (errno's value in and out; discarded here), so $r8...$r11
+     survive them.  $r8 = argc, $r9 = index,
      $r10 = string pointer, $r11 = argv.  */
-  $lr <- errno
+  $lr <- mem[errno]
   SYSCALLM SYS_argc
   $r8 <- $r4
   if signed $r8 >= 0 $pc <- 1f
@@ -70,14 +71,14 @@ _start:
   if $r9 == 0 $pc <- 3f
   $r9 <- tiny $r9 + -1
   $r4 <- $r9
-  $lr <- errno
+  $lr <- mem[errno]
   SYSCALLM SYS_argnlen
   $r4 <- tiny $r4 + 4
   $r4 <- short $r4 & -4
   $sp <- $sp - $r4
   $r4 <- $r9
   $r5 <- $sp
-  $lr <- errno
+  $lr <- mem[errno]
   SYSCALLM SYS_argn
   $pc <- 2b
 3:
@@ -94,7 +95,7 @@ _start:
   $r4 <- $r4 + $r11
   mem[$r4] <- $r10
   $r4 <- $r9
-  $lr <- errno
+  $lr <- mem[errno]
   SYSCALLM SYS_argnlen
   $r4 <- tiny $r4 + 4
   $r4 <- short $r4 & -4

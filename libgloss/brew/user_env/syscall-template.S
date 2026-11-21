@@ -20,7 +20,7 @@
 
 /* Every syscall follows the same, generic layout:
  * Input:
- * $lr        -- pointer to errno
+ * $lr        -- the current value of errno
  * $r4        -- first argument (if any)
  * $r5        -- second argument (if any)
  * $r6        -- third argument (if any)
@@ -32,10 +32,16 @@
  * $r5        -- second return value (if any)
  * $r6        -- third return value (if any)
  * $r7        -- fourth return value (if any)
- * errno      -- updated as(if) needed
+ * $lr        -- the new value of errno
  *
  * In other words, this is normal function calling conventions,
- * with the addition of $lr pointing to errno on entry.
+ * with the addition of errno passed in and out in $lr (see
+ * "Syscalls" in brew/docs_src/abi.rst).
+ *
+ * errno here is newlib's global 'errno' (newlib/libc/reent/reent.c),
+ * not the reentrant one C code reads through __errno (): the _r
+ * wrappers (_open_r etc.) clear it before calling us and copy it to
+ * _REENT->_errno when the call leaves it non-zero.
  */
 
   .global  FN_NAME
@@ -50,9 +56,10 @@ FN_NAME:
   */
   $sp <- short $sp + (-4)
   mem[$sp] <- $lr
-  $lr <- errno
+  $lr <- mem[errno]
   syscall
   .hword  SYSCALL_NO
+  mem[errno] <- $lr
   $lr <- mem[$sp]
   $sp <- short $sp + 4
   $pc <- $lr

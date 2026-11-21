@@ -22,3 +22,10 @@ FN_NAME (void)
   errno = ENOSYS;
   return -1;
 }
+
+#ifdef ALIAS_NAME
+/* The public name, for calls newlib has no wrapper for (chmod etc.).  */
+#define STR_(x) #x
+#define STR(x) STR_(x)
+int ALIAS_NAME (void) __attribute__ ((weak, alias (STR (FN_NAME))));
+#endif

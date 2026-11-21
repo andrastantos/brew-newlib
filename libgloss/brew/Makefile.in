@@ -78,12 +78,16 @@ ENVS = user_env operating_env
 USER_SYSCALLS = exit open close read write lseek unlink getpid kill fstat \
 	stat chdir chmod utime time gettimeofday times link
 USER_OBJS = $(addprefix user_env/,$(addsuffix .o,$(USER_SYSCALLS)) \
-	isatty.o sbrk.o)
+	isatty.o getentropy.o posix.o sbrk.o)
 
 # operating_env: device drivers, plus ENOSYS stubs (nosys.c with
 # FN_NAME=_<name>) for what has no device behind it.
 OPERATING_NOSYS = open close lseek unlink stat chdir chmod utime time \
-	gettimeofday times link
+	gettimeofday times link getentropy
+# newlib has no public wrappers for these _<name> calls (user_env has
+# them in posix.c), so their stubs also define <name> as a weak alias.
+PUBLIC_ALIASES = chdir chmod utime
+ALIAS_FLAGS = $(if $(filter $*,$(PUBLIC_ALIASES)),-D ALIAS_NAME=$*)
 OPERATING_OBJS = $(addprefix operating_env/,$(addsuffix .o,$(OPERATING_NOSYS)) \
 	devices.o read.o write.o exit.o kill.o getpid.o isatty.o fstat.o sbrk.o)
 
@@ -117,9 +121,13 @@ user_env/isatty.o: $(srcdir)/user_env/syscall-template.S
 	@mkdir -p $(@D)
 	$(COMPILE) -o $@ -D FN_NAME=_isatty -D SYSCALL_NO=BREW_isatty -c $<
 
+user_env/getentropy.o: $(srcdir)/user_env/syscall-template.S
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -D FN_NAME=_getentropy -D SYSCALL_NO=BREW_getentropy -c $<
+
 $(addprefix operating_env/,$(addsuffix .o,$(OPERATING_NOSYS))): operating_env/%.o: $(srcdir)/operating_env/nosys.c
 	@mkdir -p $(@D)
-	$(COMPILE) -o $@ -D FN_NAME=_$* -c $<
+	$(COMPILE) -o $@ -D FN_NAME=_$* $(ALIAS_FLAGS) -c $<
 
 user_env/sbrk.o operating_env/sbrk.o: $(srcdir)/sbrk.c
 	@mkdir -p $(@D)

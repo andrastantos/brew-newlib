@@ -14,3 +14,5 @@
  */
 
 #define BREW_isatty (0x8000)
+/* 0x8001 is BREW_ioctl in the simulator's copy (not used here).  */
+#define BREW_getentropy (0x8002) /* int getentropy(void *buf, size_t len) */

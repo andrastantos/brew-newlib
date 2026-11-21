@@ -76,9 +76,9 @@ ENVS = user_env operating_env
 # user_env: every syscall stub is syscall-template.S with FN_NAME=_<name>
 # and SYSCALL_NO=SYS_<name>.
 USER_SYSCALLS = exit open close read write lseek unlink getpid kill fstat \
-	chdir chmod utime time gettimeofday times link
+	stat chdir chmod utime time gettimeofday times link
 USER_OBJS = $(addprefix user_env/,$(addsuffix .o,$(USER_SYSCALLS)) \
-	stat.o isatty.o sbrk.o)
+	isatty.o sbrk.o)
 
 # operating_env: device drivers, plus ENOSYS stubs (nosys.c with
 # FN_NAME=_<name>) for what has no device behind it.

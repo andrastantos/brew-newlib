@@ -26,6 +26,7 @@
 
   .globl  __start
   .weak  _start
+  .weak  _stack
 #ifdef _HAVE_INITFINI_ARRAY /* renamed from HAVE_INITFINI_ARRAY in newlib 437c5c508 */
   .section ".init"
 #else
@@ -34,13 +35,22 @@
   .type  __start,@function
 __start:
 _start:
-  $sp <- _stack     /* set the top of stack */
+  /* The program starts in TASK mode with whatever $sp its environment set
+     up: an OS (such as the Anachron ROM in anachron/sw_new, which sizes it
+     from the detected DRAM) or the simulator.  A linker script can still
+     dictate the stack by defining _stack, as ld's default script does
+     (0x80000000, the top of the simulator's memory); without it, keep the
+     incoming $sp.  */
+  $r4 <- _stack
+  if $r4 == 0 $pc <- 0f
+  $sp <- $r4
+0:
   $fp <- $fp ^ $fp  /* zero fp to allow unwinders to stop */
 
   /* Build argc/argv from the simulator's SYS_argc/SYS_argnlen/SYS_argn at
      the top of the stack, above main's frame:
 
-       _stack -> | argv[argc-1] string | ... | argv[0] string |
+  initial $sp -> | argv[argc-1] string | ... | argv[0] string |
                  | NULL | argv[argc-1] | ... | argv[0] | <- $r11 = argv
                  | padding to 16 bytes                  | <- $sp
 
@@ -97,10 +107,10 @@ _start:
   $r4 <- $r4 + $r11
   $r5 <- $r5 ^ $r5
   mem[$r4] <- $r5
-  /* The ABI only needs 4-byte alignment, but keep main's frame as aligned
-     as it was when the stack started at _stack: code with over-aligned
-     locals or arguments (gcc.dg/pr84877.c) relies on it, as Brew has no
-     stack realignment.  */
+  /* The ABI only needs 4-byte alignment, but give main a 16-byte aligned
+     frame (as it had when the stack started at _stack, before argv): code
+     with over-aligned locals or arguments (gcc.dg/pr84877.c) relies on it,
+     as Brew has no stack realignment.  */
   $sp <- short $sp & -16
 
   /* zero the bss area */

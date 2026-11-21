@@ -61,97 +61,94 @@ OBJCOPY = `if [ -f ${objroot}/../binutils/objcopy ] ; \
 
 LD_SCRIPTS = brew-elf-common.ld sim.ld
 
-CRT0		= crt0.o
-CRT0_INSTALL	= install-crt0
+# Two board support packages, one per environment (the simulator's
+# --environment user|operating; gcc -menvironment=user|operating). Each is
+# built from, and installed into, a subdirectory named after its environment,
+# with the same file names: <env>/crt0.o and <env>/libbrew.a. Sources shared
+# by both are in this directory.
+#
+# user_env:      TASK mode under an OS or the simulator, which provides the
+#                syscalls (syscall-template.S) and sets up $sp.
+# operating_env: bare metal from reset (SCHEDULER mode); drives the console
+#                and simulator-control devices directly.
+ENVS = user_env operating_env
 
-BREW_BSP = libbrew.a
-BREW_OBJS = \
-	exit.o \
-	open.o \
-	close.o \
-	read.o \
-	write.o \
-	lseek.o \
-	unlink.o \
-	getpid.o \
-	kill.o \
-	fstat.o \
-	chdir.o \
-	stat.o \
-	chmod.o \
-	utime.o \
-	time.o \
-	gettimeofday.o \
-	times.o \
-	link.o \
-	isatty.o \
-	sbrk.o
+# user_env: every syscall stub is syscall-template.S with FN_NAME=_<name>
+# and SYSCALL_NO=SYS_<name>.
+USER_SYSCALLS = exit open close read write lseek unlink getpid kill fstat \
+	chdir chmod utime time gettimeofday times link
+USER_OBJS = $(addprefix user_env/,$(addsuffix .o,$(USER_SYSCALLS)) \
+	stat.o isatty.o sbrk.o)
+
+# operating_env: device drivers, plus ENOSYS stubs (nosys.c with
+# FN_NAME=_<name>) for what has no device behind it.
+OPERATING_NOSYS = open close lseek unlink stat chdir chmod utime time \
+	gettimeofday times link
+OPERATING_OBJS = $(addprefix operating_env/,$(addsuffix .o,$(OPERATING_NOSYS)) \
+	devices.o read.o write.o exit.o kill.o getpid.o isatty.o fstat.o sbrk.o)
+
+COMPILE = $(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) -I$(srcdir) -I$(srcdir)/$(@D) $(CFLAGS)
 
 #### Host specific Makefile fragment comes in here.
 @host_makefile_frag@
 
-all: ${CRT0} $(BREW_BSP)
+# Only the rules below: make's built-in .c.o rule would find the sources
+# through VPATH and put the objects in this directory.
+.SUFFIXES:
 
-$(BREW_BSP): $(BREW_OBJS)
-	$(AR) $(ARFLAGS) $@ $?
+all: $(addsuffix /crt0.o,$(ENVS)) $(addsuffix /libbrew.a,$(ENVS))
+
+user_env/libbrew.a: $(USER_OBJS)
+operating_env/libbrew.a: $(OPERATING_OBJS)
+user_env/libbrew.a operating_env/libbrew.a:
+	rm -f $@
+	$(AR) $(AR_FLAGS) $@ $^
 	$(RANLIB) $@
 
-exit.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_exit -D SYSCALL_NO=SYS_exit -c $<
-open.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_open -D SYSCALL_NO=SYS_open -c $<
-close.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_close -D SYSCALL_NO=SYS_close -c $<
-read.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_read -D SYSCALL_NO=SYS_read -c $<
-write.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_write -D SYSCALL_NO=SYS_write -c $<
-lseek.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_lseek -D SYSCALL_NO=SYS_lseek -c $<
-unlink.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_unlink -D SYSCALL_NO=SYS_unlink -c $<
-getpid.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_getpid -D SYSCALL_NO=SYS_getpid -c $<
-kill.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_kill -D SYSCALL_NO=SYS_kill -c $<
-fstat.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_fstat -D SYSCALL_NO=SYS_fstat -c $<
+%/crt0.o: $(srcdir)/%/crt0.S
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -c $<
 
-chdir.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_chdir -D SYSCALL_NO=SYS_chdir -c $<
-stat.o: $(srcdir)/stat.c
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_stat -D SYSCALL_NO=SYS_stat -c $<
-chmod.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_chmod -D SYSCALL_NO=SYS_chmod -c $<
-utime.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_utime -D SYSCALL_NO=SYS_utime -c $<
-time.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_time -D SYSCALL_NO=SYS_time -c $<
-gettimeofday.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_gettimeofday -D SYSCALL_NO=SYS_gettimeofday -c $<
-times.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_times -D SYSCALL_NO=SYS_times -c $<
-link.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_link -D SYSCALL_NO=SYS_link -c $<
+$(addprefix user_env/,$(addsuffix .o,$(USER_SYSCALLS))): user_env/%.o: $(srcdir)/user_env/syscall-template.S
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -D FN_NAME=_$* -D SYSCALL_NO=SYS_$* -c $<
 
-isatty.o: $(srcdir)/syscall-template.S
-	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -o $@ -D FN_NAME=_isatty -D SYSCALL_NO=BREW_isatty -c $<
+user_env/isatty.o: $(srcdir)/user_env/syscall-template.S
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -D FN_NAME=_isatty -D SYSCALL_NO=BREW_isatty -c $<
 
-sbrk.o: $(srcdir)/sbrk.c
+$(addprefix operating_env/,$(addsuffix .o,$(OPERATING_NOSYS))): operating_env/%.o: $(srcdir)/operating_env/nosys.c
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -D FN_NAME=_$* -c $<
 
-install: ${CRT0_INSTALL} $($(CPU)_INSTALL)
-	${mkinstalldirs} ${DESTDIR}${tooldir}/lib${MULTISUBDIR}
-	$(INSTALL_DATA) $(BREW_BSP) $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}/$(BREW_BSP)
+user_env/sbrk.o operating_env/sbrk.o: $(srcdir)/sbrk.c
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -c $<
+
+user_env/%.o: $(srcdir)/user_env/%.c
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -c $<
+
+operating_env/%.o: $(srcdir)/operating_env/%.c
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -c $<
+
+operating_env/%.o: $(srcdir)/operating_env/%.S
+	@mkdir -p $(@D)
+	$(COMPILE) -o $@ -c $<
+
+install:
+	for env in $(ENVS); do \
+	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/lib$(MULTISUBDIR)/$$env; \
+	  $(INSTALL_DATA) $$env/crt0.o $(DESTDIR)$(tooldir)/lib$(MULTISUBDIR)/$$env/crt0.o; \
+	  $(INSTALL_DATA) $$env/libbrew.a $(DESTDIR)$(tooldir)/lib$(MULTISUBDIR)/$$env/libbrew.a; \
+	done
 	for x in ${LD_SCRIPTS}; do \
 	  ${INSTALL_DATA} ${srcdir}/$$x $(DESTDIR)${tooldir}/lib/$$x; \
 	done;
 
-install-crt0:
-	${mkinstalldirs} ${DESTDIR}${tooldir}/lib${MULTISUBDIR}
-	${INSTALL_DATA} ${CRT0} $(DESTDIR)${tooldir}/lib${MULTISUBDIR}/$$x
-
 clean mostlyclean:
-	rm -f *.o *.a
+	rm -f *.o *.a $(addsuffix /*.o,$(ENVS)) $(addsuffix /*.a,$(ENVS))
 
 distclean maintainer-clean realclean: clean
 	rm -f Makefile

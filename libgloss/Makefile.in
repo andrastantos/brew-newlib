@@ -2370,6 +2370,7 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
 @CONFIG_BREW_TRUE@	gettimeofday times link getentropy
 
 @CONFIG_BREW_TRUE@brew_PUBLIC_ALIASES = chdir chmod utime
+@CONFIG_BREW_TRUE@brew_WEAK_STUBS = getentropy
 @CONFIG_BREW_TRUE@brew_operating_env_libbrew_a_SOURCES = \
 @CONFIG_BREW_TRUE@	brew/operating_env/devices.S \
 @CONFIG_BREW_TRUE@	brew/operating_env/read.c \
@@ -10713,7 +10714,8 @@ maintainer-clean-local: maintainer-clean-multi
 @CONFIG_BREW_TRUE@brew/operating_env/nosys-%.$(OBJEXT): brew/operating_env/nosys.c \
 @CONFIG_BREW_TRUE@		| brew/operating_env/$(am__dirstamp)
 @CONFIG_BREW_TRUE@	$(AM_V_CC)$(COMPILE) -D FN_NAME=_$* \
-@CONFIG_BREW_TRUE@	  $(if $(filter $*,$(brew_PUBLIC_ALIASES)),-D ALIAS_NAME=$*) -c -o $@ $<
+@CONFIG_BREW_TRUE@	  $(if $(filter $*,$(brew_PUBLIC_ALIASES)),-D ALIAS_NAME=$*) \
+@CONFIG_BREW_TRUE@	  $(if $(filter $*,$(brew_WEAK_STUBS)),-D WEAK) -c -o $@ $<
 @CONFIG_MCORE_TRUE@@MCORE_BUILD_ELF_TRUE@mcore/cmb.ld: mcore/elf-cmb.ld
 @CONFIG_MCORE_TRUE@@MCORE_BUILD_ELF_TRUE@	$(AM_V_GEN)cp $< $@
 @CONFIG_MCORE_TRUE@@MCORE_BUILD_ELF_TRUE@mcore/cmb.specs: mcore/elf-cmb.specs

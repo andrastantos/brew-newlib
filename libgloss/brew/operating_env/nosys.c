@@ -15,7 +15,17 @@
 #include <errno.h>
 
 /* Compiled once per function, with -DFN_NAME=_open etc. There is no file
-   system or clock: fail with ENOSYS. Arguments are ignored.  */
+   system or clock: fail with ENOSYS. Arguments are ignored.
+
+   With -DWEAK the stub is weak, so a definition elsewhere replaces it even
+   when it is linked from a library after libbrew.a.  _getentropy is: bare
+   metal has no entropy source, and without one newlib's arc4random (which
+   libstdc++'s std::random_device uses by default) kills the program with
+   SIGKILL.  A board with a hardware random source provides
+   int _getentropy (void *buf, size_t len), returning 0 on success.  */
+#ifdef WEAK
+__attribute__ ((weak))
+#endif
 int
 FN_NAME (void)
 {

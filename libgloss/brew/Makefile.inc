@@ -82,6 +82,8 @@ libobjs_a_SOURCES += \
 ## newlib has no public wrappers for these _<name> calls (user_env has
 ## them in posix.c), so their stubs also define <name> as a weak alias.
 %C%_PUBLIC_ALIASES = chdir chmod utime
+## Stubs a program or board may replace (see nosys.c).
+%C%_WEAK_STUBS = getentropy
 
 %C%_operating_env_libbrew_a_SOURCES = \
 	%D%/operating_env/devices.S \
@@ -99,4 +101,5 @@ libobjs_a_SOURCES += \
 %D%/operating_env/nosys-%.$(OBJEXT): %D%/operating_env/nosys.c \
 		| %D%/operating_env/$(am__dirstamp)
 	$(AM_V_CC)$(COMPILE) -D FN_NAME=_$* \
-	  $(if $(filter $*,$(%C%_PUBLIC_ALIASES)),-D ALIAS_NAME=$*) -c -o $@ $<
+	  $(if $(filter $*,$(%C%_PUBLIC_ALIASES)),-D ALIAS_NAME=$*) \
+	  $(if $(filter $*,$(%C%_WEAK_STUBS)),-D WEAK) -c -o $@ $<

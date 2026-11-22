@@ -718,6 +718,8 @@ CONFIG_CSKY_FALSE
 CONFIG_CSKY_TRUE
 CONFIG_CR16_FALSE
 CONFIG_CR16_TRUE
+CONFIG_BREW_FALSE
+CONFIG_BREW_TRUE
 CONFIG_BFIN_FALSE
 CONFIG_BFIN_TRUE
 CONFIG_ARM_FALSE
@@ -2905,9 +2907,7 @@ case "${target}" in
 	config_bfin=true
 	;;
   brew-*-*)
-	ac_config_files="$ac_config_files brew/Makefile"
-
-	subdirs="$subdirs brew"
+	config_brew=true
 	;;
   cr16-*-*)
 	config_cr16=true
@@ -3052,6 +3052,14 @@ fi
 else
   CONFIG_BFIN_TRUE='#'
   CONFIG_BFIN_FALSE=
+fi
+
+   if test x$config_brew = xtrue; then
+  CONFIG_BREW_TRUE=
+  CONFIG_BREW_FALSE='#'
+else
+  CONFIG_BREW_TRUE='#'
+  CONFIG_BREW_FALSE=
 fi
 
    if test x$config_cr16 = xtrue; then
@@ -5844,6 +5852,10 @@ if test -z "${CONFIG_BFIN_TRUE}" && test -z "${CONFIG_BFIN_FALSE}"; then
   as_fn_error $? "conditional \"CONFIG_BFIN\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${CONFIG_BREW_TRUE}" && test -z "${CONFIG_BREW_FALSE}"; then
+  as_fn_error $? "conditional \"CONFIG_BREW\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${CONFIG_CR16_TRUE}" && test -z "${CONFIG_CR16_FALSE}"; then
   as_fn_error $? "conditional \"CONFIG_CR16\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -6645,7 +6657,6 @@ do
     "pa/Makefile") CONFIG_FILES="$CONFIG_FILES pa/Makefile" ;;
     "mips/Makefile") CONFIG_FILES="$CONFIG_FILES mips/Makefile" ;;
     "rs6000/Makefile") CONFIG_FILES="$CONFIG_FILES rs6000/Makefile" ;;
-    "brew/Makefile") CONFIG_FILES="$CONFIG_FILES brew/Makefile" ;;
     "cris/Makefile") CONFIG_FILES="$CONFIG_FILES cris/Makefile" ;;
     "crx/Makefile") CONFIG_FILES="$CONFIG_FILES crx/Makefile" ;;
     "mep/Makefile") CONFIG_FILES="$CONFIG_FILES mep/Makefile" ;;

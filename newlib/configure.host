@@ -819,6 +819,7 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
   brew-*-elf* | brew-*-newlib*)
         syscall_dir=syscalls
 	default_newlib_io_long_long="yes"
+	default_newlib_io_c99_formats="yes"
         ;;
   nios2*)
 	syscall_dir=

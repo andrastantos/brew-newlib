@@ -40,9 +40,11 @@ libobjs_a_SOURCES += \
 
 ## Built for both environments from the sources in this directory.
 ## mcount.c: call-graph profiling for -p/-pg (_mcount, gmon.out).
+## timespec_get.c: C11 timespec_get (declared by newlib, defined only for Cygwin).
 %C%_SHARED_SOURCES = \
 	%D%/sbrk.c \
-	%D%/mcount.c
+	%D%/mcount.c \
+	%D%/timespec_get.c
 
 ## ---------------------------------------------------------------- user_env
 

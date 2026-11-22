@@ -762,7 +762,8 @@ brew_operating_env_libbrew_a_AR = $(AR) $(ARFLAGS)
 @CONFIG_BREW_TRUE@	$(patsubst \
 @CONFIG_BREW_TRUE@	%,brew/operating_env/nosys-%.$(OBJEXT),$(brew_OPERATING_NOSYS))
 @CONFIG_BREW_TRUE@am__objects_3 = brew/sbrk.$(OBJEXT) \
-@CONFIG_BREW_TRUE@	brew/mcount.$(OBJEXT)
+@CONFIG_BREW_TRUE@	brew/mcount.$(OBJEXT) \
+@CONFIG_BREW_TRUE@	brew/timespec_get.$(OBJEXT)
 @CONFIG_BREW_TRUE@am_brew_operating_env_libbrew_a_OBJECTS =  \
 @CONFIG_BREW_TRUE@	brew/operating_env/devices.$(OBJEXT) \
 @CONFIG_BREW_TRUE@	brew/operating_env/read.$(OBJEXT) \
@@ -2346,7 +2347,8 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
 @CONFIG_BREW_TRUE@AM_CPPFLAGS_brew_operating_env = -I$(srcdir)/brew -I$(srcdir)/brew/operating_env
 @CONFIG_BREW_TRUE@brew_SHARED_SOURCES = \
 @CONFIG_BREW_TRUE@	brew/sbrk.c \
-@CONFIG_BREW_TRUE@	brew/mcount.c
+@CONFIG_BREW_TRUE@	brew/mcount.c \
+@CONFIG_BREW_TRUE@	brew/timespec_get.c
 
 @CONFIG_BREW_TRUE@brew_user_envdir = $(multilibtooldir)/user_env
 @CONFIG_BREW_TRUE@brew_user_env_DATA = brew/user_env/crt0.o
@@ -3746,6 +3748,8 @@ brew/$(DEPDIR)/$(am__dirstamp):
 brew/sbrk.$(OBJEXT): brew/$(am__dirstamp) \
 	brew/$(DEPDIR)/$(am__dirstamp)
 brew/mcount.$(OBJEXT): brew/$(am__dirstamp) \
+	brew/$(DEPDIR)/$(am__dirstamp)
+brew/timespec_get.$(OBJEXT): brew/$(am__dirstamp) \
 	brew/$(DEPDIR)/$(am__dirstamp)
 
 brew/operating_env/libbrew.a: $(brew_operating_env_libbrew_a_OBJECTS) $(brew_operating_env_libbrew_a_DEPENDENCIES) $(EXTRA_brew_operating_env_libbrew_a_DEPENDENCIES) brew/operating_env/$(am__dirstamp)
@@ -5992,6 +5996,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@bfin/$(DEPDIR)/sim-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brew/$(DEPDIR)/mcount.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brew/$(DEPDIR)/sbrk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@brew/$(DEPDIR)/timespec_get.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brew/operating_env/$(DEPDIR)/crt0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brew/operating_env/$(DEPDIR)/devices.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@brew/operating_env/$(DEPDIR)/exit.Po@am__quote@

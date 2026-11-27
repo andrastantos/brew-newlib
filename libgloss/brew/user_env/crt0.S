@@ -85,13 +85,15 @@ _start:
   /* Below the strings: the argv array, argc + 1 pointers.  */
   $r10 <- $sp
   $r4 <- tiny $r8 + 1
-  $r4 <- short $r4 << 2
+  $r4 <- $r4 + $r4               /* * 4, without a shift: the shifter is optional */
+  $r4 <- $r4 + $r4
   $sp <- $sp - $r4
   $r11 <- $sp
 4:
   if $r9 == $r8 $pc <- 5f
   $r4 <- $r9
-  $r4 <- short $r4 << 2
+  $r4 <- $r4 + $r4               /* * 4, without a shift: the shifter is optional */
+  $r4 <- $r4 + $r4
   $r4 <- $r4 + $r11
   mem[$r4] <- $r10
   $r4 <- $r9
@@ -104,7 +106,8 @@ _start:
   $pc <- 4b
 5:
   $r4 <- $r8
-  $r4 <- short $r4 << 2
+  $r4 <- $r4 + $r4               /* * 4, without a shift: the shifter is optional */
+  $r4 <- $r4 + $r4
   $r4 <- $r4 + $r11
   $r5 <- $r5 ^ $r5
   mem[$r4] <- $r5
